@@ -1,0 +1,34 @@
+---
+description: Git commit author - tous les commits doivent être au nom de benyakoub
+alwaysApply: true
+---
+
+# Git Commit Author
+
+**Règle obligatoire** : Tous les commits doivent être créés au nom de **benyakoub**.
+
+## Configuration requise
+
+Avant de créer des commits, configurer l'auteur pour ce dépôt :
+
+```bash
+git config user.name "benyakoub"
+git config user.email "ben94med@gmail.com"
+```
+
+## Instructions pour l'agent
+
+Lors de toute opération git (commit, amend, rebase avec authorship) :
+
+1. **Vérifier** que `git config user.name` retourne `benyakoub`
+2. **Si différent**, exécuter `git config user.name "benyakoub"` avant de committer
+3. **Ne jamais** créer de commits avec un autre nom d'auteur (ex. Jacob Son, etc.)
+
+## Réécrire l'historique existant
+
+Pour corriger les auteurs des derniers commits :
+
+```bash
+git config user.name "benyakoub"
+git rebase -i HEAD~N --exec 'git commit --amend --author="benyakoub <ben94med@gmail.com>" --no-edit'
+```
