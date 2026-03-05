@@ -25,34 +25,17 @@ test.describe('Homepage Visual Tests', () => {
     });
 
     // Navigate to homepage
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'load' });
     
-    // Wait for initial load
-    await page.waitForLoadState('domcontentloaded');
-    
-    // Wait for React root to exist and be visible
-    await page.waitForSelector('#root', { state: 'visible', timeout: 15000 });
-    
-    // Wait for basic content to appear with a more flexible approach
-    try {
-      await page.waitForFunction(
-        () => {
-          const root = document.getElementById('root');
-          if (!root) return false;
-          
-          // Check if there's any meaningful content
-          const hasText = root.textContent && root.textContent.trim().length > 50;
-          const hasElements = root.children.length > 0;
-          const hasCommonElements = 
-            document.querySelector('nav, header, main, section, footer, .app, [data-testid]') !== null;
-          
-          return hasText || hasElements || hasCommonElements;
-        },
-        { timeout: 15000 }
-      );
-    } catch (error) {
-      console.log('Content check failed, but continuing with test');
-    }
+    // Wait for React to render: #root starts empty and Playwright treats empty divs as hidden.
+    // Script is type="module" so it loads async; wait for root to have content (React has mounted).
+    await page.waitForFunction(
+      () => {
+        const root = document.getElementById('root');
+        return root && (root.children.length > 0 || document.querySelector('main, nav, [role="main"]'));
+      },
+      { timeout: 20000 }
+    );
     
     // Additional wait for content to stabilize
     await page.waitForTimeout(2000);
@@ -194,13 +177,15 @@ test.describe('Homepage Visual Tests', () => {
   test('Homepage - Button hover states', async ({ page, isMobile }) => {
     test.skip(isMobile, 'Hover tests not applicable on mobile');
     
-    const buttons = page.locator('button, [role="button"], .btn');
+    // Exclude fixed/overlay buttons (e.g. high-contrast toggle) that may be covered
+    const buttons = page.locator('main button, main [role="button"], main .btn');
     const buttonCount = await buttons.count();
     
     for (let i = 0; i < Math.min(buttonCount, 3); i++) { // Test up to 3 buttons
       const button = buttons.nth(i);
       if (await button.isVisible()) {
-        await button.hover();
+        await button.scrollIntoViewIfNeeded();
+        await button.hover({ force: true });
         await expect(button).toHaveScreenshot(`homepage-button-${i}-hover.png`, {
           animations: 'disabled'
         });

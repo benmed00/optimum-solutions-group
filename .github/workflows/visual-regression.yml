@@ -54,12 +54,18 @@ jobs:
         npx vite preview --port 8080 &
         npx wait-on http://localhost:8080 -t 30000
 
-    - name: Get baseline run ID (main branch)
+    - name: Get baseline run ID (PR branch or main)
       if: github.event_name == 'pull_request'
       id: baseline-run
       run: |
-        RUN_ID=$(gh run list --repo ${{ github.repository }} --branch main --workflow=visual-regression.yml --limit 1 --json databaseId,conclusion -q '.[] | select(.conclusion=="success") | .databaseId' 2>/dev/null | head -1)
+        # On PR: try current branch first (for iterative PR runs), then main
+        BRANCH="${{ github.head_ref || github.ref_name }}"
+        RUN_ID=$(gh run list --repo ${{ github.repository }} --branch "$BRANCH" --workflow=visual-regression.yml --limit 5 --json databaseId,conclusion,status -q '.[] | select(.status=="completed" and .conclusion=="success") | .databaseId' 2>/dev/null | head -1)
+        if [ -z "$RUN_ID" ]; then
+          RUN_ID=$(gh run list --repo ${{ github.repository }} --branch main --workflow=visual-regression.yml --limit 1 --json databaseId,conclusion -q '.[] | select(.conclusion=="success") | .databaseId' 2>/dev/null | head -1)
+        fi
         echo "run_id=${RUN_ID:-}" >> $GITHUB_OUTPUT
+        echo "Baseline run_id: ${RUN_ID:-none}"
 
     - name: Download Previous Visual Snapshots
       if: github.event_name == 'pull_request' && steps.baseline-run.outputs.run_id != ''
@@ -76,18 +82,21 @@ jobs:
         SNAPSHOT_DIR="tests/visual/homepage.spec.js-snapshots"
         if [ ! -d "$SNAPSHOT_DIR" ] || [ -z "$(ls -A $SNAPSHOT_DIR 2>/dev/null)" ]; then
           echo "has_baselines=false" >> $GITHUB_OUTPUT
+          echo "No baseline snapshots found - will create with --update-snapshots"
         else
           echo "has_baselines=true" >> $GITHUB_OUTPUT
+          echo "Found $(ls -1 $SNAPSHOT_DIR 2>/dev/null | wc -l) baseline snapshots"
         fi
 
     - name: Run Visual Regression Tests
       env:
         UPDATE_SNAPSHOTS: ${{ steps.baselines.outputs.has_baselines == 'false' || github.event.inputs.update_snapshots == 'true' }}
       run: |
+        echo "UPDATE_SNAPSHOTS=$UPDATE_SNAPSHOTS"
         UPDATE_FLAG=""
         if [ "$UPDATE_SNAPSHOTS" = "true" ]; then
           UPDATE_FLAG="--update-snapshots"
-          echo "Creating/updating baseline snapshots"
+          echo "Creating/updating baseline snapshots (first run or intentional update)"
         fi
         npx playwright test --config=playwright.visual.config.js $UPDATE_FLAG
 

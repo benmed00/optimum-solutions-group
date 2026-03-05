@@ -89,6 +89,7 @@
     "test:e2e:journeys": "cypress run --spec 'cypress/e2e/user-journeys/**/*'",
     "test:all": "npm run test && npm run test:e2e",
     "test:workflow": "node scripts/test-workflow.js",
+    "pipelines:skipped": "node scripts/run-skipped-pipelines.js",
     "test:workflow:local": "node scripts/test-local-workflow.js",
     "deploy:workflow": "node deploy-workflow.js",
     "badges:generate": "node scripts/generate-status-badges.js",

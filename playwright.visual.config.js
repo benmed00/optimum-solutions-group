@@ -48,37 +48,34 @@ export default defineConfig({
     navigationTimeout: 30000,
   },
 
-  /* Configure projects for major browsers */
-  projects: [
-    {
-      name: 'chromium-desktop',
-      use: { 
-        ...devices['Desktop Chrome'],
-        viewport: { width: 1280, height: 720 }
-      },
-    },
-    {
-      name: 'chromium-mobile',
-      use: { 
-        ...devices['Pixel 5'],
-      },
-    },
-    {
-      name: 'chromium-tablet',
-      use: { 
-        ...devices['iPad Pro'],
-      },
-    },
-    // Uncomment for cross-browser testing
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
-  ],
+  /* Configure projects - CI runs desktop only to stay within 30min timeout */
+  projects: process.env.CI
+    ? [
+        {
+          name: 'chromium-desktop',
+          use: {
+            ...devices['Desktop Chrome'],
+            viewport: { width: 1280, height: 720 },
+          },
+        },
+      ]
+    : [
+        {
+          name: 'chromium-desktop',
+          use: {
+            ...devices['Desktop Chrome'],
+            viewport: { width: 1280, height: 720 },
+          },
+        },
+        {
+          name: 'chromium-mobile',
+          use: { ...devices['Pixel 5'] },
+        },
+        {
+          name: 'chromium-tablet',
+          use: { ...devices['iPad Pro'] },
+        },
+      ],
 
   /* Visual comparison settings */
   expect: {
@@ -87,7 +84,7 @@ export default defineConfig({
       threshold: 0.2, // Allow 20% difference
       mode: 'pixel',
       animations: 'disabled', // Disable animations for consistent screenshots
-      timeout: 10000 // Increase screenshot timeout
+      timeout: 15000 // Screenshot stability/verification timeout
     },
     toMatchSnapshot: { 
       threshold: 0.2,
