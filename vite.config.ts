@@ -111,6 +111,33 @@ const config = async ({ mode }: ConfigEnv): Promise<UserConfig> => ({
     },
   },
   plugins: [
+    // Serve /api and /api-docs before SPA fallback (avoids 404 from React Router)
+    {
+      name: 'api-docs-rewrite',
+      enforce: 'pre',
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          const url = req.url?.split('?')[0] ?? '';
+          if (url === '/api' || url === '/api/') {
+            req.url = '/api/index.html';
+          } else if (url === '/api-docs' || url === '/api-docs/') {
+            req.url = '/api-docs/index.html';
+          }
+          next();
+        });
+      },
+      configurePreviewServer(server) {
+        server.middlewares.use((req, res, next) => {
+          const url = req.url?.split('?')[0] ?? '';
+          if (url === '/api' || url === '/api/') {
+            req.url = '/api/index.html';
+          } else if (url === '/api-docs' || url === '/api-docs/') {
+            req.url = '/api-docs/index.html';
+          }
+          next();
+        });
+      },
+    },
     react(),
     mode === 'development' && (await import('lovable-tagger')).componentTagger(),
   ],

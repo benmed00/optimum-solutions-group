@@ -149,8 +149,8 @@ function main() {
   console.log(markdownSection);
   console.log('----------------------------------------');
   
-  // Optionally save to file
-  const outputPath = path.join(process.cwd(), 'badges.md');
+  // Optionally save to file (docs folder per project convention)
+  const outputPath = path.join(process.cwd(), 'docs', 'guides', 'badges.md');
   fs.writeFileSync(outputPath, markdownSection);
   console.log(`\n✅ Badges markdown saved to: ${outputPath}`);
   

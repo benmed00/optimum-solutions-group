@@ -29,9 +29,18 @@ export default tseslint.config(
         "error",
         { allowShortCircuit: true, allowTernary: true, allowTaggedTemplates: true },
       ],
-      "@typescript-eslint/no-explicit-any": "warn",
+      // Strict typing — explicit types, no any, consistent assertions
+      "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-empty-object-type": "warn",
       "@typescript-eslint/no-require-imports": "warn",
+      "@typescript-eslint/consistent-type-assertions": [
+        "error",
+        {
+          assertionStyle: "as",
+          objectLiteralTypeAssertions: "allow",
+        },
+      ],
+      "@typescript-eslint/prefer-as-const": "error",
     },
   },
   // Disable React Refresh warnings for utility files, UI components, and test files

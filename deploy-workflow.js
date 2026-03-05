@@ -34,9 +34,9 @@ console.log('  • .github/workflows/performance-monitoring.yml - Enhanced error
 console.log('  • package.json - Added testing capabilities');
 
 log('\n📄 New Documentation:', 'blue');
-console.log('  • GITHUB_ACTIONS_FIXES.md - Detailed fix documentation');
-console.log('  • DEPLOYMENT_GUIDE.md - Comprehensive deployment guide');
-console.log('  • README_DEPLOYMENT.md - Quick start guide');
+console.log('  • docs/guides/github-actions-fixes.md - Detailed fix documentation');
+console.log('  • docs/guides/deployment-guide.md - Comprehensive deployment guide');
+console.log('  • docs/deployment/readme-deployment.md - Quick start guide');
 console.log('  • scripts/test-local-workflow.js - Local testing script');
 console.log('  • deploy-fixes.js - This deployment script');
 
