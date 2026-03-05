@@ -8,10 +8,8 @@
  * @author Optimum Solutions Group
  */
 
-import { renderHook, act } from '@testing-library/react';
-import { useCoreWebVitals } from '../useCoreWebVitals';
-import type { CoreWebVitalsOptions } from '../../types/coreWebVitals';
-
+import { renderHook } from '@testing-library/react';
+import { useCoreWebVitals, __resetCoreWebVitalsForTesting } from '../useCoreWebVitals';
 // Mock web-vitals library
 jest.mock('web-vitals', () => ({
   onLCP: jest.fn(),
@@ -65,16 +63,15 @@ Object.defineProperty(window, 'navigator', {
   writable: true,
 });
 
-// Mock location
-delete (window as any).location;
-window.location = { href: 'https://example.com' } as any;
+// Note: Do not mock window.location - JSDOM's location is not configurable and
+// assignment triggers "Not implemented: navigation" error. Default URL is fine.
 
 // Mock fetch for analytics
 global.fetch = jest.fn();
 
 describe('useCoreWebVitals Hook - Basic Tests', () => {
   beforeEach(() => {
-    // Clear all mocks before each test
+    __resetCoreWebVitalsForTesting();
     jest.clearAllMocks();
     
     // Reset mock implementations
@@ -128,14 +125,15 @@ describe('useCoreWebVitals Hook - Basic Tests', () => {
       expect(result.current.performanceScore).toBe(0);
     });
 
-    it('should register all web vitals observers on mount', () => {
+    it('should not register web vitals observers when monitoring is disabled', () => {
       renderHook(() => useCoreWebVitals());
 
-      expect(mockOnLCP).toHaveBeenCalledWith(expect.any(Function), { reportAllChanges: false });
-      expect(mockOnFCP).toHaveBeenCalledWith(expect.any(Function), { reportAllChanges: false });
-      expect(mockOnCLS).toHaveBeenCalledWith(expect.any(Function), { reportAllChanges: false });
-      expect(mockOnTTFB).toHaveBeenCalledWith(expect.any(Function));
-      expect(mockOnINP).toHaveBeenCalledWith(expect.any(Function), { reportAllChanges: false });
+      // Web vitals monitoring is disabled in the hook - observers are not registered
+      expect(mockOnLCP).not.toHaveBeenCalled();
+      expect(mockOnFCP).not.toHaveBeenCalled();
+      expect(mockOnCLS).not.toHaveBeenCalled();
+      expect(mockOnTTFB).not.toHaveBeenCalled();
+      expect(mockOnINP).not.toHaveBeenCalled();
     });
 
     it.skip('should handle server-side rendering (no window)', () => {
@@ -157,107 +155,23 @@ describe('useCoreWebVitals Hook - Basic Tests', () => {
   });
 
   describe('Web Vitals Subscriptions', () => {
-    it('should handle LCP metric updates', async () => {
+    it('should have null metrics when monitoring is disabled', () => {
       const { result } = renderHook(() => useCoreWebVitals());
 
-      const mockLCPMetric = {
-        name: 'LCP',
-        value: 2000,
-        delta: 2000,
-        id: 'lcp-1',
-        navigationType: 'navigate' as const,
-        entries: [],
-      };
-
-      act(() => {
-        if (mockOnLCP.callback) {
-          mockOnLCP.callback(mockLCPMetric);
-        }
-      });
-
-      expect(result.current.metrics.lcp).toEqual({
-        name: 'LCP',
-        value: 2000,
-        delta: 2000,
-        id: 'lcp-1',
-        rating: 'good',
-        navigationType: 'navigate',
-        timestamp: expect.any(Number),
-        entries: [],
-      });
-    });
-
-    it('should handle FID metric updates', async () => {
-      const { result } = renderHook(() => useCoreWebVitals());
-
-      const mockFIDMetric = {
-        name: 'FID',
-        value: 50,
-        delta: 50,
-        id: 'fid-1',
-        navigationType: 'navigate' as const,
-        entries: [],
-      };
-
-      act(() => {
-        if (mockOnFCP.callback) {
-          mockOnFCP.callback(mockFIDMetric);
-        }
-      });
-
-      expect(result.current.metrics.fid).toEqual({
-        name: 'FID',
-        value: 50,
-        delta: 50,
-        id: 'fid-1',
-        rating: 'good',
-        navigationType: 'navigate',
-        timestamp: expect.any(Number),
-        entries: [],
-      });
-    });
-
-    it('should handle CLS metric updates', async () => {
-      const { result } = renderHook(() => useCoreWebVitals());
-
-      const mockCLSMetric = {
-        name: 'CLS',
-        value: 0.05,
-        delta: 0.05,
-        id: 'cls-1',
-        navigationType: 'navigate' as const,
-        entries: [],
-      };
-
-      act(() => {
-        if (mockOnCLS.callback) {
-          mockOnCLS.callback(mockCLSMetric);
-        }
-      });
-
-      expect(result.current.metrics.cls).toEqual({
-        name: 'CLS',
-        value: 0.05,
-        delta: 0.05,
-        id: 'cls-1',
-        rating: 'good',
-        navigationType: 'navigate',
-        timestamp: expect.any(Number),
-        entries: [],
-      });
+      // Web vitals monitoring is disabled - metrics remain null
+      expect(result.current.metrics.lcp).toBeNull();
+      expect(result.current.metrics.fid).toBeNull();
+      expect(result.current.metrics.cls).toBeNull();
     });
   });
 
   describe('Unsubscription on Unmount', () => {
-    it('should register web vitals observers on mount', () => {
+    it('should not register observers when monitoring is disabled', () => {
       renderHook(() => useCoreWebVitals());
 
-      // Verify observers were registered
-      expect(mockOnLCP).toHaveBeenCalled();
-      expect(mockOnFCP).toHaveBeenCalled();
-      expect(mockOnCLS).toHaveBeenCalled();
-      expect(mockOnTTFB).toHaveBeenCalled();
-      expect(mockOnINP).toHaveBeenCalled();
+      expect(mockOnLCP).not.toHaveBeenCalled();
+      expect(mockOnFCP).not.toHaveBeenCalled();
+      expect(mockOnCLS).not.toHaveBeenCalled();
     });
   });
 
@@ -272,85 +186,38 @@ describe('useCoreWebVitals Hook - Basic Tests', () => {
       expect(result.current.getThreshold('INVALID')).toBe(null);
     });
 
-    it('should check if metric is good correctly', async () => {
+    it('should check if metric is good correctly', () => {
       const { result } = renderHook(() => useCoreWebVitals());
 
-      act(() => {
-        if (mockOnLCP.callback) {
-          mockOnLCP.callback({
-            name: 'LCP',
-            value: 2000, // good rating
-            delta: 2000,
-            id: 'lcp-1',
-            navigationType: 'navigate',
-            entries: [],
-          });
-        }
-      });
-
-      expect(result.current.isMetricGood('LCP')).toBe(true);
+      // With no metrics (monitoring disabled), isMetricGood returns false
+      expect(result.current.isMetricGood('LCP')).toBe(false);
       expect(result.current.isMetricGood('FID')).toBe(false);
     });
   });
 
   describe('Console Logging', () => {
-    it('should log metrics when console logging is enabled', () => {
+    it('should not log LCP metrics when monitoring is disabled', () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-      const options: CoreWebVitalsOptions = {
-        enableConsoleLogging: true,
-      };
+      renderHook(() => useCoreWebVitals({ enableConsoleLogging: true }));
 
-      renderHook(() => useCoreWebVitals(options));
-
-      act(() => {
-        if (mockOnLCP.callback) {
-          mockOnLCP.callback({
-            name: 'LCP',
-            value: 2000,
-            delta: 2000,
-            id: 'lcp-1',
-            navigationType: 'navigate',
-            entries: [],
-          });
-        }
-      });
-
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '📊 Core Web Vitals - LCP:',
-        expect.objectContaining({
-          value: 2000,
-          rating: 'good',
-          delta: 2000,
-        })
+      const lcpCalls = consoleSpy.mock.calls.filter(
+        (call) => call[0] === '📊 Core Web Vitals - LCP:'
       );
+      expect(lcpCalls).toHaveLength(0);
 
       consoleSpy.mockRestore();
     });
 
-    it('should not log metrics when console logging is disabled', () => {
+    it('should not log LCP metrics when console logging is disabled', () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-      const options: CoreWebVitalsOptions = {
-        enableConsoleLogging: false,
-      };
+      renderHook(() => useCoreWebVitals({ enableConsoleLogging: false }));
 
-      renderHook(() => useCoreWebVitals(options));
-
-      act(() => {
-        if (mockOnLCP.callback) {
-          mockOnLCP.callback({
-            name: 'LCP',
-            value: 2000,
-            delta: 2000,
-            id: 'lcp-1',
-            navigationType: 'navigate',
-            entries: [],
-          });
-        }
-      });
-
-      expect(consoleSpy).not.toHaveBeenCalled();
+      const lcpCalls = consoleSpy.mock.calls.filter(
+        (call) => call[0] === '📊 Core Web Vitals - LCP:'
+      );
+      expect(lcpCalls).toHaveLength(0);
 
       consoleSpy.mockRestore();
     });

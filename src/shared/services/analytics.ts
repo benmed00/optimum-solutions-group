@@ -723,6 +723,8 @@ class AnalyticsService {
 export const analytics = new AnalyticsService({
   debug: import.meta.env.MODE === 'development',
   enabled: import.meta.env.MODE === 'production',
+  apiEndpoint: import.meta.env['VITE_ANALYTICS_API_ENDPOINT'],
+  apiKey: import.meta.env['VITE_ANALYTICS_API_KEY'],
   trackPageViews: true,
   trackUserInteractions: true,
   trackPerformance: true,

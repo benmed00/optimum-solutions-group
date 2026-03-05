@@ -120,7 +120,7 @@ export const isPromiseErrorContext = (context: ErrorContext): context is Promise
     ('reason' in context && context.reason !== undefined) ||
     ('promise' in context && (
       context.promise instanceof Promise ||
-      (typeof context.promise === 'object' && context.promise !== null && typeof (context.promise as any).then === 'function')
+      (typeof context.promise === 'object' && context.promise !== null && typeof (context.promise as PromiseLike<unknown>).then === 'function')
     ))
   ) && (
     !('filename' in context) && 

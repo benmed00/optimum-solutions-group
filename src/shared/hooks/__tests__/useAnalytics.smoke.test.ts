@@ -139,9 +139,15 @@ const mockWindow = {
   },
 };
 
-// Mock global objects
-(global as any).window = mockWindow;
-(global as any).document = mockDocument;
+// Mock global objects (Omit avoids intersecting with Window/Document - mocks are partial)
+type GlobalWithMocks = Omit<typeof globalThis, 'window' | 'document' | 'performance'> & {
+  window?: typeof mockWindow;
+  document?: typeof mockDocument;
+  performance?: { now: jest.Mock; getEntriesByType: jest.Mock };
+};
+const g = global as unknown as GlobalWithMocks;
+g.window = mockWindow;
+g.document = mockDocument;
 
 // Mock fetch for network calls
 global.fetch = jest.fn();
@@ -153,25 +159,25 @@ describe('useAnalytics Hook - Smoke Tests', () => {
     if (originalPerformanceDescriptor) {
       Object.defineProperty(global, 'performance', originalPerformanceDescriptor);
     } else {
-      delete (global as any).performance;
+      delete (global as Record<string, unknown>)['performance'];
     }
 
     if (originalWindowDescriptor) {
       Object.defineProperty(global, 'window', originalWindowDescriptor);
     } else {
-      delete (global as any).window;
+      delete (global as Record<string, unknown>)['window'];
     }
 
     if (originalDocumentDescriptor) {
       Object.defineProperty(global, 'document', originalDocumentDescriptor);
     } else {
-      delete (global as any).document;
+      delete (global as Record<string, unknown>)['document'];
     }
 
     if (originalFetchDescriptor) {
       Object.defineProperty(global, 'fetch', originalFetchDescriptor);
     } else {
-      delete (global as any).fetch;
+      delete (global as Record<string, unknown>)['fetch'];
     }
   });
 

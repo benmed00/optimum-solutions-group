@@ -29,8 +29,9 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Only log errors in non-test environments
-    if (import.meta.env.MODE !== 'test') {
+    // Only log errors in non-test environments (process.env for Jest, import.meta for Vite)
+    const isTest = typeof process !== 'undefined' && process.env?.['NODE_ENV'] === 'test';
+    if (!isTest) {
       console.error('Error caught by boundary:', error, errorInfo);
     }
     
@@ -73,12 +74,11 @@ class ErrorBoundary extends Component<Props, State> {
       if (fallback != null) {
         return fallback;
       }
-      const isDevelopment: boolean = import.meta.env.DEV;
+      const isDevelopment: boolean = process.env?.['NODE_ENV'] === 'development';
       const errorTitle: string = this.getErrorTitle();
 
       return (
-        // @ts-ignore
-          <div className={`flex flex-col items-center justify-center p-4 ${this.props.isolate ? 'min-h-32' : 'min-h-screen'}`}>
+        <div className={`flex flex-col items-center justify-center p-4 ${this.props.isolate ? 'min-h-32' : 'min-h-screen'}`}>
           <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
           <h1 className="text-xl font-bold mb-2">{errorTitle}</h1>
           

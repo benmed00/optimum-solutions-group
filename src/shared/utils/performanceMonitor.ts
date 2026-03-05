@@ -22,6 +22,7 @@ import { logger } from './logger';
 // DISABLED: import { onCLS, onFCP, onLCP, onTTFB, onINP, type Metric } from 'web-vitals';
 // type Metric = { value: number; name: string };
 import type { CoreWebVitalsData, WebVitalsMetric } from '../types/coreWebVitals';
+import { apiClient } from '../services/apiClient';
 
 export interface PerformanceMetrics {
   // Core Web Vitals (Enhanced)
@@ -257,18 +258,12 @@ class PerformanceMonitor {
 
     // Custom analytics endpoint
     if (import.meta.env.MODE === 'production') {
-      fetch('/api/analytics/performance', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          metrics,
-          userAgent: navigator.userAgent,
-          url: window.location.href,
-          timestamp: Date.now(),
-        }),
-      }).catch(error => {
+      apiClient.post('/api/analytics/performance', {
+        metrics,
+        userAgent: navigator.userAgent,
+        url: window.location.href,
+        timestamp: Date.now(),
+      }, { retries: 1, timeout: 5000 }).catch(error => {
         logger.warn('[Performance Monitor] Failed to send analytics:', error);
       });
     }
