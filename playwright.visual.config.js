@@ -31,7 +31,7 @@ export default defineConfig({
 
   /* Shared settings for all the projects below */
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
+    /* Base URL - must match workflow (vite preview --port 8080) */
     baseURL: 'http://localhost:8080',
     
     /* Collect trace when retrying the failed test. */
