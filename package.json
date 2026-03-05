@@ -1,9 +1,31 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "optimum-solutions-group",
+  "version": "1.0.0",
+  "description": "Modern, performance-optimized React application with enterprise-grade monitoring, accessibility (WCAG 2.1 AA), and comprehensive testing (Jest, Cypress, Playwright)",
   "private": true,
   "type": "module",
-  "version": "1.0.0",
+  "author": "benyakoub <benyakoub.dev@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "vite",
+    "typescript",
+    "tailwindcss",
+    "shadcn-ui",
+    "accessibility",
+    "performance",
+    "analytics",
+    "pwa"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/benmed00/optimum-solutions-group.git"
+  },
+  "homepage": "https://github.com/benmed00/optimum-solutions-group#readme",
+  "bugs": {
+    "url": "https://github.com/benmed00/optimum-solutions-group/issues"
+  },
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"

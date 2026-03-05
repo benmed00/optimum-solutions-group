@@ -13,7 +13,7 @@ Avant de créer des commits, configurer l'auteur pour ce dépôt :
 
 ```bash
 git config user.name "benyakoub"
-git config user.email "ben94med@gmail.com"
+git config user.email "benyakoub.dev@gmail.com"
 ```
 
 ## Instructions pour l'agent
@@ -30,5 +30,5 @@ Pour corriger les auteurs des derniers commits :
 
 ```bash
 git config user.name "benyakoub"
-git rebase -i HEAD~N --exec 'git commit --amend --author="benyakoub <ben94med@gmail.com>" --no-edit'
+git rebase -i HEAD~N --exec 'git commit --amend --author="benyakoub <benyakoub.dev@gmail.com>" --no-edit'
 ```
