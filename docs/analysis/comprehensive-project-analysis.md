@@ -1040,7 +1040,7 @@ interface AnalyticsEvent {
 ### Current Performance Metrics
 
 | Metric | Current Value | Target | Status |
-|--------|---------------|--------|--------|
+| ------ | ------------- | ------ | ------ |
 | Lighthouse Performance | 95/100 | 90+ | ✅ |
 | Accessibility Score | 100/100 | 100 | ✅ |
 | Test Coverage | 95%+ | 90%+ | ✅ |
@@ -1051,7 +1051,7 @@ interface AnalyticsEvent {
 ### Quality Gates
 
 | Gate | Threshold | Current | Status |
-|------|-----------|---------|--------|
+| ---- | --------- | ------- | ------ |
 | TypeScript Errors | 0 | 0 | ✅ |
 | ESLint Errors | 0 | 0 | ✅ |
 | Test Failures | 0 | 0 | ✅ |

@@ -47,7 +47,7 @@ The performance monitoring workflow now includes:
 ## Required Secrets
 
 | Secret Name | Description | Required |
-|------------|-------------|----------|
+| ----------- | ----------- | -------- |
 | `SLACK_WEBHOOK_URL` | Slack webhook URL for notifications | Optional* |
 
 *If you don't set up Slack notifications, you can either:

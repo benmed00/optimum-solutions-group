@@ -69,7 +69,7 @@
 **Sprint Goal**: Establish secure foundation with TypeScript strict mode
 
 | Week | Days | Focus Areas | Story Points |
-|------|------|-------------|--------------|
+| ---- | ---- | ----------- | ------------ |
 | 1 | Aug 26-30 | Vulnerability fixes, TypeScript prep | 20 |
 | 2 | Sep 2-6 | TypeScript strict mode, CSP | 20 |
 
@@ -91,7 +91,7 @@
 **Sprint Goal**: Achieve significant bundle size reduction and performance gains
 
 | Week | Days | Focus Areas | Story Points |
-|------|------|-------------|--------------|
+| ---- | ---- | ----------- | ------------ |
 | 3 | Sep 9-13 | Bundle optimization, code splitting | 21 |
 | 4 | Sep 16-20 | Service worker, monitoring cleanup | 21 |
 
@@ -113,7 +113,7 @@
 **Sprint Goal**: Refactor to scalable, maintainable architecture
 
 | Week | Days | Focus Areas | Story Points |
-|------|------|-------------|--------------|
+| ---- | ---- | ----------- | ------------ |
 | 5 | Sep 23-27 | Feature-based restructure, memoization | 26 |
 | 6 | Sep 30-Oct 4 | Virtualization, error boundaries | 25 |
 
@@ -136,7 +136,7 @@
 **Sprint Goal**: Complete testing infrastructure and production readiness
 
 | Week | Days | Focus Areas | Story Points |
-|------|------|-------------|--------------|
+| ---- | ---- | ----------- | ------------ |
 | 7 | Oct 7-11 | E2E testing, visual regression | 21 |
 | 8 | Oct 14-18 | Monitoring, coverage, deployment | 12 |
 

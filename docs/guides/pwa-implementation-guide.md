@@ -400,7 +400,7 @@ npx serve dist
 ## Browser Support
 
 | Feature | Chrome | Safari | Firefox | Edge |
-|---------|--------|--------|---------|------|
+| ------- | ------ | ------ | ------- | ---- |
 | Service Worker | ✅ | ✅ | ✅ | ✅ |
 | Web Manifest | ✅ | ✅ | ✅ | ✅ |
 | Install Prompt | ✅ | ❌* | ❌ | ✅ |

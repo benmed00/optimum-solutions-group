@@ -12,9 +12,9 @@ Your GitHub Actions workflow fixes are complete and ready to deploy! All issues 
 - **Error Resilience** - Added comprehensive fallback mechanisms
 
 ### 📄 Documentation Created
-- `GITHUB_ACTIONS_FIXES.md` - Detailed technical documentation
-- `DEPLOYMENT_GUIDE.md` - Complete deployment and testing guide
-- `README_DEPLOYMENT.md` - Quick start reference
+- [docs/guides/github-actions-fixes.md](../guides/github-actions-fixes.md) - Detailed technical documentation
+- [docs/guides/deployment-guide.md](../guides/deployment-guide.md) - Complete deployment and testing guide
+- [docs/deployment/readme-deployment.md](readme-deployment.md) - Quick start reference
 - `scripts/test-local-workflow.js` - Local testing script
 - `deploy-workflow.js` - Automated deployment helper
 

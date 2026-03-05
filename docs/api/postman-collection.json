@@ -1,0 +1,652 @@
+{
+  "info": {
+    "_postman_id": "optimum-solutions-group-api-v1",
+    "name": "Optimum Solutions Group API",
+    "description": "RESTful API collection for Optimum Solutions Group platform.\n\n**Includes:**\n- Authentication (login, register, refresh, logout)\n- User management (profile, CRUD)\n- Contact form submission\n- Analytics (events, performance, report)\n- Content (posts CRUD)\n\n**Usage:**\n1. Import the environment file and select it\n2. Run `Auth > Login` to obtain a token\n3. Token is auto-stored in `auth_token` for secured requests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:4173/api"
+    },
+    {
+      "key": "auth_token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "description": "Login, registration, token refresh, logout",
+      "item": [
+        {
+          "name": "Login - Success (Mock)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    if (json.token) {",
+                  "        pm.collectionVariables.set('auth_token', json.token);",
+                  "    }",
+                  "}",
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Response has token', () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('token');",
+                  "    pm.expect(json).to.have.property('user');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"user123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Authenticate with valid credentials. Token is stored in collection variable for subsequent requests."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"user123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/login",
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "login"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.mock-token\",\n  \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.refresh-token\",\n  \"expiresIn\": 3600,\n  \"user\": {\n    \"id\": 1,\n    \"email\": \"user@example.com\",\n    \"firstName\": \"Test\",\n    \"lastName\": \"User\",\n    \"role\": \"user\"\n  }\n}"
+            },
+            {
+              "name": "Invalid Credentials",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"wrong@example.com\",\n  \"password\": \"wrongpass\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/login",
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "login"]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"error\": \"Invalid credentials\",\n  \"code\": \"UNAUTHORIZED\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login - Admin (Mock)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Authenticate as admin user."
+          },
+          "response": []
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Smith\",\n  \"email\": \"jane.smith@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"confirmPassword\": \"SecurePass123!\",\n  \"agreeToTerms\": true,\n  \"newsletter\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Create a new user account."
+          },
+          "response": [
+            {
+              "name": "Created",
+              "originalRequest": {},
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"user\": {\n    \"id\": 2,\n    \"email\": \"jane.smith@example.com\",\n    \"firstName\": \"Jane\",\n    \"lastName\": \"Smith\",\n    \"role\": \"user\"\n  },\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.new-user-token\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "refresh"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "description": "User profile and management endpoints",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user/profile",
+              "host": ["{{base_url}}"],
+              "path": ["user", "profile"]
+            },
+            "description": "Get current authenticated user's profile."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 1,\n  \"email\": \"user@example.com\",\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\",\n  \"role\": \"user\",\n  \"displayName\": \"John Developer\",\n  \"bio\": \"Full-stack developer with expertise in React and TypeScript\",\n  \"website\": \"https://johndeveloper.dev\",\n  \"location\": \"San Francisco, CA\",\n  \"createdAt\": \"2024-01-15T10:00:00Z\",\n  \"updatedAt\": \"2024-03-01T14:30:00Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"displayName\": \"John Developer\",\n  \"bio\": \"Full-stack developer with expertise in React and TypeScript\",\n  \"website\": \"https://johndeveloper.dev\",\n  \"location\": \"San Francisco, CA\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/user/profile",
+              "host": ["{{base_url}}"],
+              "path": ["user", "profile"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users?page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["users"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "role",
+                  "value": "user",
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List users (admin only). Paginated."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": [\n    {\n      \"id\": 1,\n      \"email\": \"alice@example.com\",\n      \"firstName\": \"Alice\",\n      \"lastName\": \"Johnson\",\n      \"role\": \"user\"\n    },\n    {\n      \"id\": 2,\n      \"email\": \"bob@example.com\",\n      \"firstName\": \"Bob\",\n      \"lastName\": \"Smith\",\n      \"role\": \"user\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 2\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/1",
+              "host": ["{{base_url}}"],
+              "path": ["users", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"firstName\": \"New\",\n  \"lastName\": \"User\",\n  \"role\": \"user\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": ["{{base_url}}"],
+              "path": ["users"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Updated\",\n  \"lastName\": \"Name\",\n  \"role\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/1",
+              "host": ["{{base_url}}"],
+              "path": ["users", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/1",
+              "host": ["{{base_url}}"],
+              "path": ["users", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Contact",
+      "description": "Contact form submission",
+      "item": [
+        {
+          "name": "Submit Contact Form",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Smith\",\n  \"email\": \"john@company.com\",\n  \"company\": \"Acme Inc\",\n  \"phone\": \"+1 (555) 123-4567\",\n  \"projectType\": \"web-app\",\n  \"budget\": \"$10k-$25k\",\n  \"message\": \"We need a custom web application for inventory management. Our team has 50 users and we need real-time sync.\",\n  \"timeline\": \"asap\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/contact",
+              "host": ["{{base_url}}"],
+              "path": ["contact"]
+            },
+            "description": "Submit consultation request. Matches ContactSection form fields."
+          },
+          "response": [
+            {
+              "name": "Created",
+              "originalRequest": {},
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"message\": \"Thank you. We'll respond within 24 hours.\"\n}"
+            },
+            {
+              "name": "Validation Error",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"error\": \"Validation failed\",\n  \"code\": \"VALIDATION_ERROR\",\n  \"details\": [\n    {\n      \"field\": \"email\",\n      \"message\": \"Invalid email format\"\n    }\n  ]\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "description": "Analytics events, performance metrics, reports",
+      "item": [
+        {
+          "name": "Submit Events Batch",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"events\": [\n    {\n      \"type\": \"pageview\",\n      \"category\": \"navigation\",\n      \"action\": \"page_view\",\n      \"label\": \"/\",\n      \"timestamp\": 1709654400000,\n      \"sessionId\": \"sess_abc123\",\n      \"url\": \"https://optimumsolutions.com/\",\n      \"referrer\": \"\",\n      \"title\": \"Optimum Solutions Group\",\n      \"userAgent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36\",\n      \"properties\": {}\n    }\n  ],\n  \"session\": {\n    \"id\": \"sess_abc123\",\n    \"startTime\": 1709654300000,\n    \"pageViews\": 5,\n    \"interactions\": 12,\n    \"duration\": 180000\n  },\n  \"metadata\": {\n    \"timestamp\": 1709654400000,\n    \"version\": \"1.0.0\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/analytics",
+              "host": ["{{base_url}}"],
+              "path": ["analytics"]
+            },
+            "description": "Batch analytics events. Used by service worker sync and analytics flush."
+          },
+          "response": [
+            {
+              "name": "Accepted",
+              "originalRequest": {},
+              "status": "Accepted",
+              "code": 202,
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Submit Performance Metrics",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"metrics\": {\n    \"lcp\": 2200,\n    \"fid\": 80,\n    \"cls\": 0.08,\n    \"fcp\": 1800,\n    \"ttfb\": 600,\n    \"domContentLoaded\": 150,\n    \"loadComplete\": 200\n  },\n  \"userAgent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36\",\n  \"url\": \"https://optimumsolutions.com/\",\n  \"timestamp\": 1709654400000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/analytics/performance",
+              "host": ["{{base_url}}"],
+              "path": ["analytics", "performance"]
+            },
+            "description": "Core Web Vitals and custom metrics. Sent by performance monitor."
+          },
+          "response": [
+            {
+              "name": "Accepted",
+              "originalRequest": {},
+              "status": "Accepted",
+              "code": 202,
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Get Analytics Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/analytics/report?range=24h",
+              "host": ["{{base_url}}"],
+              "path": ["analytics", "report"],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "24h",
+                  "description": "1h | 24h | 7d | 30d | 90d"
+                }
+              ]
+            },
+            "description": "Aggregated report for dashboard. Used by useAnalyticsData hook."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"events\": [],\n  \"session\": {\n    \"id\": \"sess_abc123\",\n    \"pageViews\": 5,\n    \"interactions\": 12,\n    \"duration\": 180000\n  },\n  \"metrics\": {\n    \"totalPageViews\": 150,\n    \"uniqueVisitors\": 45,\n    \"averageSessionDuration\": 4.2,\n    \"bounceRate\": 32,\n    \"totalEvents\": 890,\n    \"conversionRate\": 2.5\n  },\n  \"deviceBreakdown\": [\n    { \"name\": \"Desktop\", \"value\": 65, \"percentage\": 65 },\n    { \"name\": \"Mobile\", \"value\": 30, \"percentage\": 30 },\n    { \"name\": \"Tablet\", \"value\": 5, \"percentage\": 5 }\n  ],\n  \"topPages\": [\n    { \"url\": \"/\", \"views\": 120, \"time\": 45.2 },\n    { \"url\": \"/analytics\", \"views\": 85, \"time\": 120.5 }\n  ],\n  \"timeSeriesData\": [\n    { \"timestamp\": \"2024-03-05T10:00:00Z\", \"events\": 25, \"users\": 8 },\n    { \"timestamp\": \"2024-03-05T11:00:00Z\", \"events\": 42, \"users\": 15 }\n  ],\n  \"performanceMetrics\": {\n    \"avgLCP\": 2200,\n    \"avgFID\": 80,\n    \"avgCLS\": 0.08,\n    \"avgFCP\": 1800,\n    \"avgTTFB\": 600\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Content",
+      "description": "Posts and content management",
+      "item": [
+        {
+          "name": "List Posts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/posts?page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["posts"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "status",
+                  "value": "published",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": [\n    {\n      \"id\": 1,\n      \"title\": \"Getting Started with React\",\n      \"slug\": \"getting-started-react\",\n      \"excerpt\": \"A comprehensive guide...\",\n      \"status\": \"published\",\n      \"publishedAt\": \"2024-02-15T10:00:00Z\",\n      \"createdAt\": \"2024-02-10T08:00:00Z\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Post by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/posts/1",
+              "host": ["{{base_url}}"],
+              "path": ["posts", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"New Blog Post\",\n  \"content\": \"Full markdown content here...\",\n  \"excerpt\": \"Short summary\",\n  \"status\": \"draft\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/posts",
+              "host": ["{{base_url}}"],
+              "path": ["posts"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Post",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Title\",\n  \"content\": \"Updated content\",\n  \"status\": \"published\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/posts/1",
+              "host": ["{{base_url}}"],
+              "path": ["posts", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Post",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/posts/1",
+              "host": ["{{base_url}}"],
+              "path": ["posts", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "optimum-solutions-group-env-production",
+  "name": "Optimum Solutions Group - Production",
+  "values": [
+    {
+      "key": "base_url",
+      "value": "https://api.optimumsolutions.com/v1",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment"
+}

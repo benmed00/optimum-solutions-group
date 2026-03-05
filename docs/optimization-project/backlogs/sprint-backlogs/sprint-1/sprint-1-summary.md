@@ -129,7 +129,7 @@
 ### Sprint 1 vs Plan Comparison
 
 | Metric | Planned | Actual | Variance |
-|--------|---------|--------|----------|
+| ------ | ------- | ------ | -------- |
 | Story Points | 21 | 21 | 0% |
 | Timeline | 10 days | 4 days | -60% (ahead) |
 | Vulnerabilities | 7 → 0 | 7 → 0 | 0% (target met) |

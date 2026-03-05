@@ -33,7 +33,7 @@ Repository → Settings → Secrets and variables → Actions
 ```
 
 | Secret Name | Description | Status |
-|-------------|-------------|---------|
+| ----------- | ----------- | ------- |
 | `SLACK_WEBHOOK_URL` | Your Slack webhook URL | ⏳ **REQUIRED** |
 
 **Alternative**: If you don't want Slack notifications, you can remove the `notify` job from `.github/workflows/performance-monitoring.yml`

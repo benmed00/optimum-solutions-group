@@ -43,7 +43,7 @@ This document summarizes all accessibility improvements made to the Optimum Solu
 After fixes, all color combinations pass WCAG AA standards:
 
 | Color Combination | Contrast Ratio | Status |
-|------------------|----------------|--------|
+| ----------------- | -------------- | ------ |
 | Body text on background | 16.18:1 | ✅ AA ✅ AAA |
 | Muted text on background | 7.16:1 | ✅ AA ✅ AAA |
 | Primary button text | 4.52:1 | ✅ AA |

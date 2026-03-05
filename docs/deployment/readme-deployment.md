@@ -95,10 +95,10 @@ Performance dashboards automatically deploy to GitHub Pages on main branch pushe
 - `package.json` - Added testing script
 
 ### New Files Added:
-- `GITHUB_ACTIONS_FIXES.md` - Detailed documentation of all fixes
-- `DEPLOYMENT_GUIDE.md` - Comprehensive deployment guide
+- [docs/guides/github-actions-fixes.md](../guides/github-actions-fixes.md) - Detailed documentation of all fixes
+- [docs/guides/deployment-guide.md](../guides/deployment-guide.md) - Comprehensive deployment guide
 - `scripts/test-local-workflow.js` - Local testing script
-- `README_DEPLOYMENT.md` - This quick start guide
+- [docs/deployment/readme-deployment.md](readme-deployment.md) - This quick start guide
 
 ## 🎯 Key Benefits
 

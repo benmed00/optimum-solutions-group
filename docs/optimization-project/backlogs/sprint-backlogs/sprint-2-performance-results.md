@@ -106,7 +106,7 @@ Total JavaScript: ~398KB (1.2% total reduction)
 ### ✅ **Bundle Size Targets**
 
 | Target | Before | After | Status |
-|--------|--------|--------|---------|
+| ------ | ------ | ----- | ------ |
 | Vendor chunk < 120KB | 157KB | 141KB | ✅ Achieved |
 | Main chunk < 100KB | 120KB | 45KB | ✅ Exceeded |  
 | Total bundle < 250KB | 403KB | 398KB | ⚠️ Close (minor) |

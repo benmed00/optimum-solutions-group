@@ -31,7 +31,7 @@ Phase 4 represents the culmination of advanced performance optimization and prod
 ### Tasks Completed
 
 | Task ID | Description | Status | Impact |
-|---------|-------------|--------|--------|
+| ------- | ----------- | ------ | ------ |
 | OSG-014 | Advanced Code Splitting | ✅ | Bundle size reduced by 30-40% |
 | OSG-015 | Bundle Size & Tree Shaking | ✅ | Dead code elimination, optimized chunks |
 | OSG-016 | Service Worker Implementation | ✅ | 60-80% faster repeat visits |
@@ -130,7 +130,7 @@ src/shared/utils/serviceWorkerManager.ts  // SW lifecycle management
 **Caching Strategies:**
 
 | Strategy | Use Case | Cache Duration |
-|----------|----------|----------------|
+| -------- | -------- | -------------- |
 | Cache First | Static assets (JS, CSS, images) | 30 days |
 | Network First | API calls, dynamic content | 1 hour |
 | Stale While Revalidate | Fonts, icons | 7 days |
@@ -428,7 +428,7 @@ usePerformanceMonitor({
 ### Before vs After Optimization
 
 | Metric | Before Phase 4 | After Phase 4 | Improvement |
-|--------|----------------|---------------|-------------|
+| ------ | -------------- | ------------ | ----------- |
 | Bundle Size | 2.8 MB | 1.8 MB | 36% reduction |
 | FCP | 2.1s | 1.2s | 43% improvement |
 | LCP | 3.8s | 2.2s | 42% improvement |

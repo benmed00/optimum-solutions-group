@@ -1,0 +1,25 @@
+{
+  "id": "optimum-solutions-group-env",
+  "name": "Optimum Solutions Group - Local",
+  "values": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:4173/api",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment"
+}
