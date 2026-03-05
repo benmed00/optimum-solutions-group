@@ -2,8 +2,10 @@ import React, { useCallback, memo } from 'react';
 import { Button } from '@/shared/ui/button';
 import ParticleSystem from '@/shared/components/ParticleSystem';
 import { useAccessibilityContext } from '@/shared/components/AccessibilityProvider';
+import { useTestId } from '@/shared/hooks/useTestId';
 
 const HeroSection: React.FC = memo(() => {
+  const tid = useTestId('HeroSection');
   const { prefersReducedMotion } = useAccessibilityContext();
   // Memoized scroll functions with accessibility improvements
   const scrollToContact = useCallback(() => {
@@ -84,6 +86,7 @@ const HeroSection: React.FC = memo(() => {
               aria-label="Call to action buttons"
             >
               <Button 
+                {...tid('cta-transformation')}
                 onClick={scrollToContact}
                 size="lg"
                 className="btn-hero text-lg px-12 py-6 h-auto font-medium tracking-wide"
@@ -93,6 +96,7 @@ const HeroSection: React.FC = memo(() => {
               </Button>
               
               <Button 
+                {...tid('cta-explore')}
                 onClick={scrollToServices}
                 variant="outline" 
                 size="lg"

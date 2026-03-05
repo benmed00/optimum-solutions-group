@@ -1,5 +1,7 @@
 # Performance Optimizations Applied
 
+**Related**: [Optimization Project](README.md) | [Phase 4 Optimizations](phase4-optimizations.md)
+
 ## Summary
 This document outlines all the performance optimizations applied to improve the Lighthouse performance score from 2/4 to a higher rating.
 

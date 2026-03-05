@@ -2,14 +2,14 @@
 
 /**
  * Deployment Script for GitHub Actions Fixes
- * 
+ *
  * Provides deployment instructions and summary for the GitHub Actions workflow fixes.
  */
 
 // Colors for terminal output
 const colors = {
   green: '\x1b[32m',
-  yellow: '\x1b[33m', 
+  yellow: '\x1b[33m',
   red: '\x1b[31m',
   blue: '\x1b[34m',
   cyan: '\x1b[36m',
@@ -93,7 +93,7 @@ log('\n💡 Pro Tips:', 'blue');
 console.log('• Monitor the "Actions" tab on GitHub for real-time progress');
 console.log('• Dashboard will be available at: https://{username}.github.io/{repo-name}');
 console.log('• Set SLACK_WEBHOOK_URL secret for notifications (optional)');
-console.log('• All jobs have fallbacks - workflow won\'t fail on minor issues');
+console.log("• All jobs have fallbacks - workflow won't fail on minor issues");
 
 // Final message
 log('\n🎉 All fixes are ready for deployment!', 'green');

@@ -2,6 +2,8 @@
 
 Your GitHub Actions workflow fixes are complete and ready to deploy! All issues have been resolved and comprehensive documentation has been created.
 
+**Related**: [Deployment Index](README.md) | [Deployment Guide](../guides/deployment-guide.md) | [GitHub Actions Fixes](../guides/github-actions-fixes.md)
+
 ## 📋 What's Been Fixed
 
 ### ✅ Core Issues Resolved
@@ -16,7 +18,7 @@ Your GitHub Actions workflow fixes are complete and ready to deploy! All issues 
 - [docs/guides/deployment-guide.md](../guides/deployment-guide.md) - Complete deployment and testing guide
 - [docs/deployment/readme-deployment.md](readme-deployment.md) - Quick start reference
 - `scripts/test-local-workflow.js` - Local testing script
-- `deploy-workflow.js` - Automated deployment helper
+- `scripts/deploy-workflow.js` - Automated deployment helper
 
 ### 🛠️ Testing Added
 - Local workflow validation script

@@ -1,5 +1,7 @@
 # 🚀 Deployment Readiness Checklist
 
+**Related**: [Deployment Index](README.md) | [Deployment Ready](deployment-ready.md) | [GitHub Actions Setup](../guides/github-actions-setup.md)
+
 ## ✅ GitHub Actions Fixes - COMPLETED
 
 All the GitHub Actions workflow errors have been resolved:
@@ -123,7 +125,7 @@ If you encounter issues after deployment:
 
 1. Check the workflow logs in GitHub Actions tab
 2. Run `npm run test:workflow` locally to diagnose issues
-3. Review the `GITHUB_ACTIONS_SETUP.md` for detailed setup instructions
+3. Review the [GitHub Actions Setup](../guides/github-actions-setup.md) for detailed setup instructions
 
 ## 📊 Expected Results
 

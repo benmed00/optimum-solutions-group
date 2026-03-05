@@ -1,6 +1,8 @@
 import { Mail, Phone, MapPin, Linkedin, Twitter, Github } from 'lucide-react';
+import { useTestId } from '@/shared/hooks/useTestId';
 
 const Footer = () => {
+  const tid = useTestId('Footer');
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
@@ -155,12 +157,13 @@ const Footer = () => {
               ))}
             </ul>
 
-            <div className="bg-secondary/20 p-6 rounded-2xl">
+            <div {...tid('cta-card')} className="bg-secondary/20 p-6 rounded-2xl">
               <h4 className="font-semibold mb-2">Ready to Get Started?</h4>
               <p className="text-primary-foreground text-sm mb-4 opacity-90">
                 Book your free consultation today and see how we can transform your business.
               </p>
               <button
+                {...tid('schedule-button')}
                 onClick={() => scrollToSection('#contact')}
                 className="bg-secondary text-secondary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-secondary/90 transition-colors"
               >

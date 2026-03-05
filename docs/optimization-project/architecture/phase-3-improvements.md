@@ -1,5 +1,7 @@
 # Phase 3: Architecture Improvements
 
+**Related**: [Optimization Project](../../README.md) | [Comprehensive Recheck Report](comprehensive-recheck-report.md) | [Deployment Plan](deployment-plan.md)
+
 ## Overview
 
 Phase 3 focused on fundamental architectural improvements to enhance maintainability, performance, and developer experience. This phase included feature-based architecture migration, component memoization, image loading optimization, and enhanced error handling.

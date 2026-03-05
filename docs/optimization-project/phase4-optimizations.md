@@ -2,6 +2,8 @@
 
 This document provides comprehensive documentation for all Phase 4 optimizations implemented in the Optimum Solutions Group website, including deployment strategies, performance improvements, and monitoring solutions.
 
+**Related**: [Optimization Project](README.md) | [Performance Optimizations](performance-optimizations.md)
+
 ## Table of Contents
 
 - [Overview](#overview)
