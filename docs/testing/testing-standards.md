@@ -4,6 +4,10 @@
 
 This document outlines the comprehensive testing standards and patterns used throughout the Optimum Solutions Group project. Our testing approach emphasizes thoroughness, maintainability, and professional quality.
 
+## Related Documentation
+
+- [DOM Test IDs Guide](../guides/dom-test-ids.md) — Standardized `data-testid` strategy for selectors
+
 ## Table of Contents
 
 1. [Testing Philosophy](#testing-philosophy)

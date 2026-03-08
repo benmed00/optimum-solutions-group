@@ -170,7 +170,7 @@ Quick lookup – all scripts in alphabetical order:
 
 | Script | Command | Description |
 | ------ | ------- | ----------- |
-| `deploy:workflow` | `node deploy-workflow.js` | Deployment workflow |
+| `deploy:workflow` | `node scripts/deploy-workflow.js` | Deployment workflow |
 | `badges:generate` | `node scripts/generate-status-badges.js` | GitHub badges |
 | `prepare:dev` | `type-check && echo '✅ Development environment ready!'` | Dev readiness check |
 | `coverage:normalize` | `node scripts/normalize-coverage-paths.js` | Normalize coverage paths |

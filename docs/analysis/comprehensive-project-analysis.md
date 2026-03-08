@@ -1,5 +1,7 @@
 # Comprehensive Project Analysis: Optimum Solutions Group
 
+**Related**: [Documentation Index](../README.md) | [Technical Audit Report](../technical-audit-report.md) | [Optimization Project](../optimization-project/README.md)
+
 ## Executive Summary
 
 The Optimum Solutions Group project is a **modern, enterprise-grade React application** built with TypeScript, demonstrating excellent adherence to software engineering best practices. The project showcases a well-architected, accessible, and performant web application with comprehensive testing coverage and monitoring capabilities.

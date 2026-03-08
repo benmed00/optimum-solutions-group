@@ -2,6 +2,8 @@
 
 Use this template to create issues. Each block can be pasted into GitHub's "New Issue" form.
 
+**Related**: [Documentation Index](README.md) | [Technical Audit Report](technical-audit-report.md)
+
 ---
 
 ## Issue 1: Remove console.log from main.tsx

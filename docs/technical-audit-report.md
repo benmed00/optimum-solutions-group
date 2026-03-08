@@ -4,6 +4,8 @@
 **Audit Date:** March 5, 2025  
 **Auditor:** Senior Staff Engineer (Technical Audit)
 
+**Related**: [Documentation Index](README.md) | [Optimization Project](optimization-project/README.md) | [Comprehensive Analysis](analysis/comprehensive-project-analysis.md)
+
 ---
 
 ## 1. Executive Summary

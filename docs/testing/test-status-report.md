@@ -1,5 +1,7 @@
 # Test Status Report
 
+**Related**: [Testing Standards](testing-standards.md) | [DOM Test IDs Guide](../guides/dom-test-ids.md)
+
 ## Summary
 Date: 2025-08-23
 Tests Re-checked: Jest Unit Tests + Cypress E2E Tests
