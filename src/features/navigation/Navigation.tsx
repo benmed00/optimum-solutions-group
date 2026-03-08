@@ -2,8 +2,10 @@ import { useState, useEffect, useCallback, useMemo, memo, useRef } from 'react';
 import { Button } from '@/shared/ui/button';
 import { Menu, X } from 'lucide-react';
 import { useAccessibilityContext } from '@/shared/components/AccessibilityProvider';
+import { useTestId, type TestIdFn } from '@/shared/hooks/useTestId';
 
 const Navigation = memo(() => {
+  const tid: TestIdFn = useTestId('Navigation');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -115,6 +117,7 @@ const Navigation = memo(() => {
   return (
     <nav 
       ref={navRef}
+      {...tid('root')}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled ? 'bg-background/95 backdrop-blur-md shadow-md' : 'bg-transparent'
       }`}
@@ -143,6 +146,7 @@ const Navigation = memo(() => {
 
           {/* Desktop Navigation */}
           <div 
+            {...tid('desktop-menu')}
             className="hidden md:flex items-center space-x-8"
             role="navigation"
             aria-label="Main navigation menu"
@@ -151,6 +155,7 @@ const Navigation = memo(() => {
             {navItems.map((item) => (
               <button
                 key={item.label}
+                {...tid('nav-link', item.label.toLowerCase())}
                 onClick={() => scrollToSection(item.href, item.label)}
                 className="text-foreground hover:text-primary transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm px-2 py-1"
                 tabIndex={0}
@@ -160,6 +165,7 @@ const Navigation = memo(() => {
               </button>
             ))}
             <Button 
+              {...tid('cta-button')}
               onClick={() => scrollToSection('#contact', 'Contact')}
               className="btn-hero"
               aria-label="Get free consultation - navigate to contact section"
@@ -170,6 +176,7 @@ const Navigation = memo(() => {
 
           {/* Mobile Menu Button */}
           <button
+            {...tid('mobile-menu-toggle')}
             className="md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             onClick={toggleMenu}
             aria-expanded={isMenuOpen}
@@ -190,6 +197,7 @@ const Navigation = memo(() => {
         {isMenuOpen && (
           <div 
             ref={containerRef}
+            {...tid('mobile-menu')}
             className="md:hidden pb-4 focus-trap"
             id="mobile-menu"
             role="menu"
@@ -199,6 +207,7 @@ const Navigation = memo(() => {
               {navItems.map((item) => (
                 <button
                   key={item.label}
+                  {...tid('mobile-nav-link', item.label.toLowerCase())}
                   onClick={() => scrollToSection(item.href, item.label)}
                   className="text-left text-foreground hover:text-primary transition-colors duration-200 font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                   role="menuitem"
@@ -209,6 +218,7 @@ const Navigation = memo(() => {
                 </button>
               ))}
               <Button 
+                {...tid('mobile-cta-button')}
                 onClick={() => scrollToSection('#contact', 'Contact')}
                 className="btn-hero w-full mt-4"
                 aria-label="Get free consultation - navigate to contact section"

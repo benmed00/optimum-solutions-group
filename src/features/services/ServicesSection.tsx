@@ -1,8 +1,10 @@
 import { Code, Workflow, Users, BarChart, Palette, Headphones, TrendingUp, Database, Cpu, Shield } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 import useScrollAnimation from '@/shared/hooks/useScrollAnimation';
+import { useTestId } from '@/shared/hooks/useTestId';
 
 const ServicesSection = () => {
+  const tid = useTestId('ServicesSection');
   const headerRef = useScrollAnimation();
   const gridRef = useScrollAnimation();
 
@@ -97,7 +99,7 @@ const ServicesSection = () => {
   };
 
   return (
-    <section id="services" className="section-padding bg-background overflow-hidden">
+    <section id="services" {...tid('root')} className="section-padding bg-background overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header ref={headerRef} className="text-center mb-20 animate-out">
           <h2 className="font-playfair italic text-5xl md:text-6xl lg:text-7xl font-light text-foreground mb-6 leading-tight">

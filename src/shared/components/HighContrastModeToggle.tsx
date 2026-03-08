@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/shared/ui/button';
+import { useTestId } from '@/shared/hooks/useTestId';
 import { Eye, EyeOff } from 'lucide-react';
 
 /**
  * High contrast mode toggle for improved accessibility
  */
 export const HighContrastModeToggle: React.FC = () => {
+  const tid = useTestId('HighContrastModeToggle');
   const [isHighContrast, setIsHighContrast] = useState(false);
 
   useEffect(() => {
@@ -61,6 +63,7 @@ export const HighContrastModeToggle: React.FC = () => {
 
   return (
     <Button
+      {...tid('toggle')}
       variant="ghost"
       size="sm"
       onClick={toggleHighContrast}
