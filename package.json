@@ -96,6 +96,8 @@
     "budgets:check": "node scripts/enforce-performance-budgets.js",
     "prepare:dev": "npm run type-check && echo '✅ Development environment ready!'",
     "test:visual": "playwright test --config=playwright.visual.config.js",
+    "test:visual:ci": "playwright test --config=playwright.visual.config.js --project=chromium-desktop",
+    "test:visual:all": "node scripts/run-visual-all.js",
     "test:visual:update": "playwright test --config=playwright.visual.config.js --update-snapshots",
     "test:visual:report": "playwright show-report playwright-report",
     "test:visual:ui": "playwright test --config=playwright.visual.config.js --ui",
@@ -106,7 +108,8 @@
     "pwa:performance": "node scripts/pwa-dev-tools.js analyze-performance",
     "pwa:test-offline": "node scripts/pwa-dev-tools.js test-offline",
     "pwa:help": "node scripts/pwa-dev-tools.js help",
-    "generate:icons": "node scripts/generate-pwa-icons.js"
+    "generate:icons": "node scripts/generate-pwa-icons.js",
+    "kill-port": "node scripts/kill-port.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -196,6 +199,7 @@
     "commander": "^12.1.0",
     "cypress": "^15.0.0",
     "cypress-axe": "^1.7.0",
+    "cypress-real-events": "^1.15.0",
     "depcheck": "^1.4.7",
     "esbuild": "^0.25.9",
     "eslint": "^9.9.0",
