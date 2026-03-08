@@ -9,7 +9,9 @@ import { waitForLayoutStability, waitForFontsReady } from './helpers.js';
  */
 
 test.describe('Homepage Visual Tests', () => {
-  
+  // Apply to entire test (including beforeEach); CI runners are slower
+  test.describe.configure({ timeout: process.env.CI ? 120000 : 60000 });
+
   test.beforeEach(async ({ page }) => {
     // Handle console errors gracefully
     page.on('console', msg => {
@@ -30,12 +32,14 @@ test.describe('Homepage Visual Tests', () => {
     
     // Wait for React to render: #root starts empty and Playwright treats empty divs as hidden.
     // Script is type="module" so it loads async; wait for root to have content (React has mounted).
+    // CI runners are slower; use longer timeout to avoid flakiness.
+    const mountTimeout = process.env.CI ? 45000 : 20000;
     await page.waitForFunction(
       () => {
         const root = document.getElementById('root');
         return root && (root.children.length > 0 || document.querySelector('main, nav, [role="main"]'));
       },
-      { timeout: 20000 }
+      { timeout: mountTimeout }
     );
     
     // Additional wait for content to stabilize
@@ -159,7 +163,8 @@ test.describe('Homepage Visual Tests', () => {
   // Test with different color schemes (if supported)
   test('Homepage - Dark theme', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'Color scheme tests run on Chromium only');
-    test.setTimeout(60000); // Full-page on mobile/tablet can be slow
+    test.setTimeout(process.env.CI ? 120000 : 60000); // Full-page + font load can be slow in CI
+    const mountTimeout = process.env.CI ? 45000 : 20000;
     await page.emulateMedia({ colorScheme: 'dark' });
     await page.goto('/', { waitUntil: 'load' });
     await page.waitForFunction(
@@ -167,7 +172,7 @@ test.describe('Homepage Visual Tests', () => {
         const root = document.getElementById('root');
         return root && (root.children.length > 0 || document.querySelector('main, nav, [role="main"]'));
       },
-      { timeout: 20000 }
+      { timeout: mountTimeout }
     );
     await page.waitForTimeout(2000);
     await page.waitForLoadState('networkidle');
@@ -191,7 +196,8 @@ test.describe('Homepage Visual Tests', () => {
 
   test('Homepage - Light theme', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'Color scheme tests run on Chromium only');
-    test.setTimeout(60000); // Full-page on mobile/tablet can be slow
+    test.setTimeout(process.env.CI ? 120000 : 60000); // Full-page + font load can be slow in CI
+    const mountTimeout = process.env.CI ? 45000 : 20000;
     await page.emulateMedia({ colorScheme: 'light' });
     await page.goto('/', { waitUntil: 'load' });
     await page.waitForFunction(
@@ -199,7 +205,7 @@ test.describe('Homepage Visual Tests', () => {
         const root = document.getElementById('root');
         return root && (root.children.length > 0 || document.querySelector('main, nav, [role="main"]'));
       },
-      { timeout: 20000 }
+      { timeout: mountTimeout }
     );
     await page.waitForTimeout(2000);
     await page.waitForLoadState('networkidle');

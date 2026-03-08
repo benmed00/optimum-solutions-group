@@ -15,7 +15,10 @@ export default defineConfig({
   
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  
+
+  /* Default test timeout (includes beforeEach); CI runners need more time */
+  timeout: process.env.CI ? 120000 : 60000,
+
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
   
@@ -43,9 +46,9 @@ export default defineConfig({
     /* Record video on failure */
     video: 'retain-on-failure',
     
-    /* Increase timeout for elements */
-    actionTimeout: 15000,
-    navigationTimeout: 30000,
+    /* Increase timeout for elements (CI runners are slower) */
+    actionTimeout: process.env.CI ? 45000 : 15000,
+    navigationTimeout: process.env.CI ? 60000 : 30000,
   },
 
   /* Configure projects - desktop only by default (matches CI). Use VISUAL_ALL=1 for mobile+tablet */

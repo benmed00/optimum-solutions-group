@@ -114,7 +114,8 @@ describe('Button Component E2E Tests', () => {
       // Native buttons have implicit role="button"; explicit role is optional
       cy.get('[data-testid="btn-primary"]').then(($btn) => {
         const role = $btn.attr('role')
-        expect(role === undefined || role === 'button').to.be.true
+        const isValidRole = role === undefined || role === 'button'
+        void expect(isValidRole).to.be.true
       })
 
       // Disabled buttons should have disabled attribute

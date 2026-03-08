@@ -53,6 +53,7 @@ jobs:
       run: |
         npx vite preview --port 8080 &
         npx wait-on http://localhost:8080 -t 30000
+        sleep 5
 
     - name: Get baseline run ID (PR branch or main)
       if: github.event_name == 'pull_request'
