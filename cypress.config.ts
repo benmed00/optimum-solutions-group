@@ -38,9 +38,6 @@ export default defineConfig({
     },
     // Browser-specific configurations
     chromeWebSecurity: false,
-    // Disable uncaught exception handling for accessibility tests
-    // @ts-expect-error: experimentalSessionAndOrigin is not yet in Cypress types
-    experimentalSessionAndOrigin: true,
   },
   component: {
     devServer(devServerConfig) {

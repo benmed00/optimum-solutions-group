@@ -22,7 +22,8 @@ describe('Index Page - Landing', () => {
   describe('Navigation', () => {
     it('should display navigation with links', () => {
       cy.get('nav, [role="navigation"]').should('be.visible');
-      cy.get('a[href="#contact"]').should('exist');
+      // Nav uses buttons with onClick, not anchor tags; check for Contact nav item
+      cy.get('nav').contains('Contact').should('exist');
     });
 
     it('should have skip link for accessibility', () => {

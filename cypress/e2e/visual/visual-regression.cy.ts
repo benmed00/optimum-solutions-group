@@ -48,7 +48,7 @@ describe('Visual Regression Tests', () => {
       cy.get('[data-testid="select-category"]').click()
       cy.get('[data-testid="option-support"]').click()
       cy.get('[data-testid="textarea-message"]').type('Testing visual regression')
-      cy.get('[data-testid="checkbox-subscribe"]').check()
+      cy.get('[data-testid="checkbox-subscribe"]').click()
       
       cy.get('[data-testid="form-card"]')
         .screenshot('form-filled-state', {
@@ -290,7 +290,7 @@ describe('Visual Regression Tests', () => {
         .screenshot('checkbox-focus-unchecked')
       
       cy.get('[data-testid="checkbox-subscribe"]')
-        .check()
+        .click()
         .screenshot('checkbox-focus-checked')
     })
 

@@ -107,10 +107,16 @@ Cypress.Commands.add('waitForStable' as never, (...args: unknown[]) => {
  */
 Cypress.Commands.add('testKeyboardNavigation' as never, (...args: unknown[]) => {
   const [startSelector, keys, expectedSelectors] = args as [string, string[], string[]]
-  cy.get(startSelector).focus()
-  
+  cy.get(startSelector).realClick()
+
   keys.forEach((key, index) => {
-    cy.focused().type(`{${key}}`)
+    if (key === 'tab') {
+      cy.realPress('Tab')
+    } else if (key === 'shift-tab') {
+      cy.realPress(['Shift', 'Tab'])
+    } else {
+      cy.focused().type(`{${key}}`)
+    }
     if (expectedSelectors[index]) {
       cy.get(expectedSelectors[index]).should('be.focused')
     }
@@ -208,8 +214,8 @@ Cypress.Commands.add('testModal' as never, (...args: unknown[]) => {
   // Open modal
   cy.get(triggerSelector).click()
   cy.get(modalSelector).should('be.visible')
-  // Test focus trap
-  cy.get('body').type('{tab}')
+  // Test focus trap (use real keyboard - cy.type('{tab}') not supported)
+  cy.realPress('Tab')
   cy.focused().should('exist').and('be.visible')
   
   // Close modal
@@ -241,7 +247,7 @@ Cypress.Commands.add('tab' as never, { prevSubject: 'optional' }, (subject: unkn
     if (subject) {
       // If subject exists, focus it and use it as target
       return cy.wrap(subject).focus().then(($el) => {
-        targetElement = $el[0] as HTMLElement
+        targetElement = ($el as JQuery<HTMLElement>)[0]
         
         // Create comprehensive keyboard event properties
         const eventProps = {
@@ -262,8 +268,8 @@ Cypress.Commands.add('tab' as never, { prevSubject: 'optional' }, (subject: unkn
     } else {
       // If no subject, use the currently focused element
       return cy.focused().then(($focused) => {
-        if ($focused.length > 0) {
-          targetElement = $focused[0] as HTMLElement
+        if (($focused as JQuery<HTMLElement>).length > 0) {
+          targetElement = ($focused as JQuery<HTMLElement>)[0]
         } else {
           // Fallback to document.activeElement if cy.focused() doesn't work
           targetElement = win.document.activeElement as HTMLElement || win.document.body

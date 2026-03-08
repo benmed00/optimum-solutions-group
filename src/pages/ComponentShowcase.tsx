@@ -89,7 +89,7 @@ export default function ComponentShowcase() {
         {/* Buttons Section */}
         <Card data-testid="buttons-card">
           <CardHeader>
-            <CardTitle>Buttons</CardTitle>
+            <CardTitle as="h2">Buttons</CardTitle>
             <CardDescription>Various button styles and states</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -133,7 +133,7 @@ export default function ComponentShowcase() {
         {/* Form Components Section */}
         <Card data-testid="form-card">
           <CardHeader>
-            <CardTitle>Form Components</CardTitle>
+            <CardTitle as="h2">Form Components</CardTitle>
             <CardDescription>Interactive form with validation</CardDescription>
           </CardHeader>
           <CardContent>
@@ -143,6 +143,7 @@ export default function ComponentShowcase() {
                   <Label htmlFor="name">Name *</Label>
                   <Input
                     id="name"
+                    type="text"
                     data-testid="input-name"
                     placeholder="Enter your name"
                     value={formData.name}
@@ -170,7 +171,7 @@ export default function ComponentShowcase() {
                   value={formData.category} 
                   onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
                 >
-                  <SelectTrigger data-testid="select-category">
+                  <SelectTrigger id="category" data-testid="select-category">
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>

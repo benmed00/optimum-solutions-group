@@ -276,18 +276,16 @@ describe('Form Components E2E Tests', () => {
     it('should have no accessibility violations', () => {
       // Ensure axe-core is injected before running accessibility checks
       cy.injectAxe();
-      cy.get('[data-testid="form-card"]').within(() => {
-        cy.checkA11y(undefined, {
-          rules: {
-            // Allow some rules that might be false positives in test environment
-            'color-contrast': { enabled: false },
-            'color-contrast-enhanced': { enabled: false },
-            'landmark-unique': { enabled: false },
-            'region': { enabled: false },
-            'bypass': { enabled: false },
-            'focus-order-semantics': { enabled: false }
-          }
-        })
+      cy.checkA11y('[data-testid="form-card"]', {
+        rules: {
+          // Allow some rules that might be false positives in test environment
+          'color-contrast': { enabled: false },
+          'color-contrast-enhanced': { enabled: false },
+          'landmark-unique': { enabled: false },
+          'region': { enabled: false },
+          'bypass': { enabled: false },
+          'focus-order-semantics': { enabled: false }
+        }
       })
     })
 
