@@ -28,23 +28,28 @@ For analytics and API features: copy `.env.example` to `.env` and fill in your v
 
 ## Documentation Index
 
-All project documentation lives in the [`docs/`](docs/) folder:
+All project documentation lives in the [docs](docs/README.md) folder. See [docs/README.md](docs/README.md) for the full index.
 
 | Section | Description |
 | ------- | ----------- |
-| [**docs/guides/**](docs/guides/) | Setup guides, analytics, accessibility, deployment, Cypress, GitHub Actions |
-| [**docs/deployment/**](docs/deployment/) | Deployment readiness, guides, and quick-start |
-| [**docs/testing/**](docs/testing/) | Testing standards and status reports |
-| [**docs/analysis/**](docs/analysis/) | Project analysis and audits |
-| [**docs/optimization-project/**](docs/optimization-project/) | Optimization roadmap, backlogs, architecture, risks |
+| [**Guides**](docs/guides/README.md) | Setup guides, analytics, accessibility, deployment, Cypress, GitHub Actions |
+| [**Deployment**](docs/deployment/README.md) | Deployment readiness, guides, and quick-start |
+| [**Testing**](docs/testing/README.md) | Testing standards and status reports |
+| [**Analysis**](docs/analysis/README.md) | Project analysis and audits |
+| [**Architecture**](docs/architecture/README.md) | Architecture diagrams and visuals |
+| [**Optimization Project**](docs/optimization-project/README.md) | Optimization roadmap, backlogs, architecture, risks |
+| [**API**](docs/api/README.md) | OpenAPI spec, Postman collection, environments |
 
 ### Key Documents
 
+- [Documentation Index](docs/README.md) — Full documentation index
 - [Deployment Guide](docs/guides/deployment-guide.md)
 - [Accessibility Guide](docs/guides/accessibility.md)
 - [Analytics Documentation](docs/guides/analytics-documentation.md)
 - [Testing Standards](docs/testing/testing-standards.md)
+- [Technical Audit Report](docs/technical-audit-report.md)
 - [Optimization Project Overview](docs/optimization-project/README.md)
+- [GitHub Issues Template](docs/github-issues-template.md) — Copy-paste ready issue templates
 
 ## Commands
 
