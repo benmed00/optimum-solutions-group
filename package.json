@@ -224,6 +224,7 @@
     "playwright": "^1.55.0",
     "postcss": "^8.4.47",
     "puppeteer": "^24.17.0",
+    "rollup-plugin-visualizer": "^5.14.0",
     "schema-dts": "^1.1.5",
     "seo-analyzer": "^3.2.0",
     "sitemap": "^8.0.0",

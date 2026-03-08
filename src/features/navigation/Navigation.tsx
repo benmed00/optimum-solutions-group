@@ -124,8 +124,8 @@ const Navigation = memo(() => {
       aria-label="Main navigation"
       role="navigation"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 overflow-visible">
+        <div className="flex justify-between items-center py-4 min-h-[4rem] md:min-h-[3.5rem]">
           {/* Logo */}
             <div className="flex items-center gap-3 group cursor-pointer justify-center">
               <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground font-bold text-sm">
@@ -147,7 +147,7 @@ const Navigation = memo(() => {
           {/* Desktop Navigation */}
           <div 
             {...tid('desktop-menu')}
-            className="hidden md:flex items-center space-x-8"
+            className="hidden md:flex items-center space-x-8 overflow-visible"
             role="navigation"
             aria-label="Main navigation menu"
             id="nav-menu"
@@ -157,7 +157,7 @@ const Navigation = memo(() => {
                 key={item.label}
                 {...tid('nav-link', item.label.toLowerCase())}
                 onClick={() => scrollToSection(item.href, item.label)}
-                className="text-foreground hover:text-primary transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm px-2 py-1"
+                className="text-foreground hover:text-primary transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm px-2 py-2 leading-normal"
                 tabIndex={0}
                 aria-label={`Navigate to ${item.label} section`}
               >

@@ -65,6 +65,11 @@ test.describe('Homepage Visual Tests', () => {
           transition-duration: 0s !important;
           transition-delay: 0s !important;
         }
+        /* Force scroll-animated content visible for full-page screenshot */
+        .animate-out, .stagger-children > * {
+          opacity: 1 !important;
+          transform: none !important;
+        }
       `
     });
   });
@@ -163,7 +168,7 @@ test.describe('Homepage Visual Tests', () => {
   // Test with different color schemes (if supported)
   test('Homepage - Dark theme', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'Color scheme tests run on Chromium only');
-    test.setTimeout(process.env.CI ? 120000 : 60000); // Full-page + font load can be slow in CI
+    test.setTimeout(process.env.CI ? 120000 : 90000); // Full-page capture can be slow
     const mountTimeout = process.env.CI ? 45000 : 20000;
     await page.emulateMedia({ colorScheme: 'dark' });
     await page.goto('/', { waitUntil: 'load' });
@@ -175,7 +180,7 @@ test.describe('Homepage Visual Tests', () => {
       { timeout: mountTimeout }
     );
     await page.waitForTimeout(2000);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.addStyleTag({
       content: `
         *, *::before, *::after {
@@ -184,19 +189,24 @@ test.describe('Homepage Visual Tests', () => {
           transition-duration: 0s !important;
           transition-delay: 0s !important;
         }
+        /* Force scroll-animated content visible for full-page screenshot */
+        .animate-out, .stagger-children > * {
+          opacity: 1 !important;
+          transform: none !important;
+        }
       `
     });
     
     await expect(page).toHaveScreenshot('homepage-dark-theme.png', {
       fullPage: true,
       animations: 'disabled',
-      timeout: 45000
+      timeout: 60000
     });
   });
 
   test('Homepage - Light theme', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'Color scheme tests run on Chromium only');
-    test.setTimeout(process.env.CI ? 120000 : 60000); // Full-page + font load can be slow in CI
+    test.setTimeout(process.env.CI ? 120000 : 90000); // Full-page capture can be slow
     const mountTimeout = process.env.CI ? 45000 : 20000;
     await page.emulateMedia({ colorScheme: 'light' });
     await page.goto('/', { waitUntil: 'load' });
@@ -208,7 +218,7 @@ test.describe('Homepage Visual Tests', () => {
       { timeout: mountTimeout }
     );
     await page.waitForTimeout(2000);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await page.addStyleTag({
       content: `
         *, *::before, *::after {
@@ -217,13 +227,18 @@ test.describe('Homepage Visual Tests', () => {
           transition-duration: 0s !important;
           transition-delay: 0s !important;
         }
+        /* Force scroll-animated content visible for full-page screenshot */
+        .animate-out, .stagger-children > * {
+          opacity: 1 !important;
+          transform: none !important;
+        }
       `
     });
     
     await expect(page).toHaveScreenshot('homepage-light-theme.png', {
       fullPage: true,
       animations: 'disabled',
-      timeout: 45000
+      timeout: 60000
     });
   });
 

@@ -71,8 +71,8 @@ junit.xml
 *.png
 *.jpg
 *.jpeg
-# Exception: keep baseline screenshots
-!tests/visual/**/*.png
+# Visual regression snapshots: generated in CI (Linux), not committed (Windows baselines fail on Linux)
+tests/visual/**/*-snapshots/
 # Exception: keep architecture diagrams
 !docs/architecture/*.png
 !docs/architecture/*.svg

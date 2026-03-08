@@ -102,7 +102,7 @@ const ServicesSection = () => {
     <section id="services" {...tid('root')} className="section-padding bg-background overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header ref={headerRef} className="text-center mb-20 animate-out">
-          <h2 className="font-playfair italic text-5xl md:text-6xl lg:text-7xl font-light text-foreground mb-6 leading-tight">
+        <h2 className="font-playfair italic text-5xl md:text-6xl lg:text-7xl font-light text-foreground mb-6 leading-tight">
             Solutions that{' '}
             <span className="text-primary">scale with you.</span>
           </h2>
@@ -111,17 +111,17 @@ const ServicesSection = () => {
           </p>
         </header>
 
-        <div ref={gridRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16 animate-out stagger-children">
+        <div ref={gridRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16 animate-out stagger-children items-stretch">
           {services.slice(0, 6).map((service, index) => (
-            <article key={index} className="service-card p-6 rounded-xl border border-border hover:border-primary/20 bg-card transition-all duration-300">
-              <service.icon className="h-8 w-8 text-primary mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-3">{service.title}</h3>
-              <p className="text-muted-foreground mb-4 leading-relaxed text-sm">{service.description}</p>
+            <article key={index} className="service-card flex flex-col h-full p-6 rounded-xl border border-border hover:border-primary/20 bg-card transition-all duration-300 text-left">
+              <service.icon className="h-8 w-8 text-primary mb-4 shrink-0" />
+              <h3 className="text-lg font-semibold text-foreground mb-3 shrink-0">{service.title}</h3>
+              <p className="text-muted-foreground mb-4 leading-relaxed text-sm flex-1 min-h-0">{service.description}</p>
               <Button 
                 onClick={scrollToContact}
                 variant="outline" 
                 size="sm"
-                className="w-full hover:bg-primary hover:text-primary-foreground"
+                className="w-full hover:bg-primary hover:text-primary-foreground shrink-0"
               >
                 {service.cta}
               </Button>
@@ -130,12 +130,12 @@ const ServicesSection = () => {
         </div>
         
         {/* Additional Services - Ultra Simplified */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-16 items-stretch">
           {services.slice(6).map((service, index) => (
-            <article key={index} className="bg-card p-4 rounded-lg border border-border hover:shadow-sm transition-shadow">
-              <service.icon className="h-6 w-6 text-primary mb-2" />
-              <h4 className="font-medium text-foreground mb-2 text-sm">{service.title}</h4>
-              <p className="text-xs text-muted-foreground mb-2">{service.description}</p>
+            <article key={index} className="bg-card flex flex-col h-full p-4 rounded-lg border border-border hover:shadow-sm transition-shadow text-left">
+              <service.icon className="h-6 w-6 text-primary mb-2 shrink-0" />
+              <h4 className="font-medium text-foreground mb-2 text-sm shrink-0">{service.title}</h4>
+              <p className="text-xs text-muted-foreground mb-2 flex-1 min-h-0">{service.description}</p>
               <button 
                 onClick={scrollToContact}
                 className="text-primary text-xs font-medium hover:underline"

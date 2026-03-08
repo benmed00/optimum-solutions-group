@@ -56,10 +56,9 @@ jobs:
         sleep 5
 
     - name: Get baseline run ID (PR branch or main)
-      if: github.event_name == 'pull_request'
       id: baseline-run
       run: |
-        # On PR: try current branch first (for iterative PR runs), then main
+        # Try current branch first (for iterative runs), then main
         BRANCH="${{ github.head_ref || github.ref_name }}"
         RUN_ID=$(gh run list --repo ${{ github.repository }} --branch "$BRANCH" --workflow=visual-regression.yml --limit 5 --json databaseId,conclusion,status -q '.[] | select(.status=="completed" and .conclusion=="success") | .databaseId' 2>/dev/null | head -1)
         if [ -z "$RUN_ID" ]; then
@@ -69,12 +68,12 @@ jobs:
         echo "Baseline run_id: ${RUN_ID:-none}"
 
     - name: Download Previous Visual Snapshots
-      if: github.event_name == 'pull_request' && steps.baseline-run.outputs.run_id != ''
+      if: steps.baseline-run.outputs.run_id != ''
       uses: actions/download-artifact@v4
       continue-on-error: true
       with:
         name: visual-snapshots
-        path: ./tests/visual
+        path: .
         run-id: ${{ steps.baseline-run.outputs.run_id }}
 
     - name: Check for baseline snapshots

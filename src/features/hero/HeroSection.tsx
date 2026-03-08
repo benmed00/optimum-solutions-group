@@ -53,9 +53,9 @@ const HeroSection: React.FC = memo(() => {
       </div>
 
       {/* Content - Minimalist centered layout inspired by Amp */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
-        <div className="min-h-[80vh] flex items-center justify-center">
-          <div className="text-center max-w-5xl mx-auto">
+      <div className="relative z-10 w-full max-w-7xl mx-auto pl-[max(1.25rem,env(safe-area-inset-left))] pr-[max(1.25rem,env(safe-area-inset-right))] sm:px-6 lg:px-8 pt-20 box-border">
+        <div className="min-h-[80vh] flex items-center justify-center min-w-0">
+          <div className="text-center max-w-5xl mx-auto w-full min-w-0">
             {/* Main headline with elegant serif typography */}
             <h1 id="hero-heading" className="mb-8 fade-in-up">
               <span className="block font-playfair italic text-6xl md:text-8xl lg:text-9xl font-light text-foreground leading-tight mb-2">
@@ -73,7 +73,7 @@ const HeroSection: React.FC = memo(() => {
             </h1>
             
             <p 
-              className="text-lg md:text-xl mb-12 text-foreground/80 leading-relaxed fade-in-up stagger-1 max-w-3xl mx-auto font-light"
+              className="text-lg md:text-xl mb-12 text-foreground/80 leading-relaxed fade-in-up stagger-1 max-w-3xl mx-auto font-light break-words"
               role="text"
               aria-describedby="hero-heading"
             >
@@ -81,7 +81,7 @@ const HeroSection: React.FC = memo(() => {
             </p>
 
             <div 
-              className="flex flex-col sm:flex-row gap-6 justify-center items-center fade-in-up stagger-2"
+              className="flex flex-col sm:flex-row gap-6 justify-center items-stretch sm:items-center fade-in-up stagger-2 w-full max-w-md sm:max-w-none mx-auto"
               role="group"
               aria-label="Call to action buttons"
             >
@@ -89,7 +89,7 @@ const HeroSection: React.FC = memo(() => {
                 {...tid('cta-transformation')}
                 onClick={scrollToContact}
                 size="lg"
-                className="btn-hero text-lg px-12 py-6 h-auto font-medium tracking-wide"
+                className="btn-hero text-lg px-8 sm:px-12 py-6 h-auto font-medium tracking-wide w-full sm:w-auto"
                 aria-label="Start Your Transformation"
               >
                 Start Your Transformation
@@ -100,7 +100,7 @@ const HeroSection: React.FC = memo(() => {
                 onClick={scrollToServices}
                 variant="outline" 
                 size="lg"
-                className="text-lg px-12 py-6 h-auto border-foreground/20 text-foreground hover:bg-foreground/10 hover:border-foreground/40 backdrop-blur-sm font-medium tracking-wide"
+                className="text-lg px-8 sm:px-12 py-6 h-auto border-foreground/20 text-foreground hover:bg-foreground/10 hover:border-foreground/40 backdrop-blur-sm font-medium tracking-wide w-full sm:w-auto"
                 aria-label="Explore Solutions"
               >
                 Explore Solutions

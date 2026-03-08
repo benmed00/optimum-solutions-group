@@ -96,9 +96,10 @@ const Index = () => {
     <HelmetProvider>
       <AccessibilityEnhancements>
         <SEOHead
-          title="Optimum Solutions Group - Digital Transformation & IoT Solutions"
+          title="Optimum Solutions Group - Custom Software Solutions"
           description="Transform your business with custom software, IoT systems, and digital solutions. We help ambitious businesses drive real, measurable results through innovative technology."
           keywords={['digital transformation', 'IoT solutions', 'custom software', 'business automation', 'web development', 'mobile apps']}
+          {...(typeof window !== 'undefined' && { canonicalUrl: window.location.origin + '/' })}
           structuredData={generateStructuredData({
             siteName: "Optimum Solutions Group",
             url: typeof window !== 'undefined' ? window.location.origin : ''
@@ -132,8 +133,8 @@ const Index = () => {
             className="sticky top-0 z-40"
           />
           
-          {/* Main content area with proper landmark structure */}
-          <main id="main" role="main" tabIndex={-1}>
+          {/* Main content area with proper landmark structure - pr for Back to Top clearance */}
+          <main id="main" role="main" tabIndex={-1} className="pr-12 md:pr-14 lg:pr-16">
             <AboutSection />
             
             <Suspense fallback={<SectionFallback />}>
