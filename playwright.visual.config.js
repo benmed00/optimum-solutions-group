@@ -48,8 +48,8 @@ export default defineConfig({
     navigationTimeout: 30000,
   },
 
-  /* Configure projects - CI runs desktop only to stay within 30min timeout */
-  projects: process.env.CI
+  /* Configure projects - desktop only by default (matches CI). Use VISUAL_ALL=1 for mobile+tablet */
+  projects: (process.env.CI || !process.env.VISUAL_ALL)
     ? [
         {
           name: 'chromium-desktop',
@@ -81,7 +81,9 @@ export default defineConfig({
   expect: {
     // Assertion timeout (full-page screenshots need more time for capture + font loading)
     timeout: 20000,
-    toHaveScreenshot: { 
+    toHaveScreenshot: {
+      // Omit {platform} so same baseline works on Windows (local) and Linux (CI)
+      pathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}-{projectName}{ext}',
       threshold: 0.2, // Allow 20% difference
       mode: 'pixel',
       animations: 'disabled', // Disable animations for consistent screenshots

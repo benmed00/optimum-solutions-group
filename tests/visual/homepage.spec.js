@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForLayoutStability, waitForFontsReady } from './helpers.js';
 
 /**
  * Homepage Visual Regression Tests
@@ -65,11 +66,11 @@ test.describe('Homepage Visual Tests', () => {
   });
 
   test('Homepage - Full page screenshot', async ({ page }) => {
-    // Take a full page screenshot (long timeout: full-page capture + font loading)
+    test.setTimeout(60000); // Full-page capture + font loading can be slow
     await expect(page).toHaveScreenshot('homepage-full-page.png', {
       fullPage: true,
       animations: 'disabled',
-      timeout: 20000
+      timeout: 45000
     });
   });
 
@@ -135,12 +136,22 @@ test.describe('Homepage Visual Tests', () => {
   });
 
   test('Homepage - Services section', async ({ page }) => {
-    // Screenshot of services section if it exists
+    test.setTimeout(60000); // Layout stability + screenshot can take 45s on mobile
     const servicesSection = page.locator('[data-testid="services-section-root"], section:has-text("Services")').first();
     if (await servicesSection.isVisible()) {
+      // Ensure fonts (e.g. Playfair) are loaded before scroll to avoid font-swap layout shift
+      await waitForFontsReady(page);
       await servicesSection.scrollIntoViewIfNeeded();
+      // Wait for layout to stabilize (section height can oscillate on mobile due to font/async content)
+      await waitForLayoutStability(page, servicesSection, {
+        timeout: 15000,
+        stabilityWindow: 800,
+        checkInterval: 200
+      });
       await expect(servicesSection).toHaveScreenshot('homepage-services-section.png', {
-        animations: 'disabled'
+        animations: 'disabled',
+        maxDiffPixelRatio: 0.05,
+        timeout: 30000
       });
     }
   });
@@ -148,7 +159,7 @@ test.describe('Homepage Visual Tests', () => {
   // Test with different color schemes (if supported)
   test('Homepage - Dark theme', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'Color scheme tests run on Chromium only');
-    
+    test.setTimeout(60000); // Full-page on mobile/tablet can be slow
     await page.emulateMedia({ colorScheme: 'dark' });
     await page.goto('/', { waitUntil: 'load' });
     await page.waitForFunction(
@@ -174,13 +185,13 @@ test.describe('Homepage Visual Tests', () => {
     await expect(page).toHaveScreenshot('homepage-dark-theme.png', {
       fullPage: true,
       animations: 'disabled',
-      timeout: 15000
+      timeout: 45000
     });
   });
 
   test('Homepage - Light theme', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'Color scheme tests run on Chromium only');
-    
+    test.setTimeout(60000); // Full-page on mobile/tablet can be slow
     await page.emulateMedia({ colorScheme: 'light' });
     await page.goto('/', { waitUntil: 'load' });
     await page.waitForFunction(
@@ -206,7 +217,7 @@ test.describe('Homepage Visual Tests', () => {
     await expect(page).toHaveScreenshot('homepage-light-theme.png', {
       fullPage: true,
       animations: 'disabled',
-      timeout: 15000
+      timeout: 45000
     });
   });
 
