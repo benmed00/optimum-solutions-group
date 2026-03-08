@@ -79,12 +79,12 @@ export default defineConfig({
 
   /* Visual comparison settings */
   expect: {
-    // Threshold for visual differences (0-1, where 0 is identical)
+    // Assertion timeout (full-page screenshots need more time for capture + font loading)
+    timeout: 20000,
     toHaveScreenshot: { 
       threshold: 0.2, // Allow 20% difference
       mode: 'pixel',
       animations: 'disabled', // Disable animations for consistent screenshots
-      timeout: 15000 // Screenshot stability/verification timeout
     },
     toMatchSnapshot: { 
       threshold: 0.2,

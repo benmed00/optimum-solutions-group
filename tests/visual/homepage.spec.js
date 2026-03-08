@@ -65,10 +65,11 @@ test.describe('Homepage Visual Tests', () => {
   });
 
   test('Homepage - Full page screenshot', async ({ page }) => {
-    // Take a full page screenshot
+    // Take a full page screenshot (long timeout: full-page capture + font loading)
     await expect(page).toHaveScreenshot('homepage-full-page.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
+      timeout: 20000
     });
   });
 
@@ -124,7 +125,7 @@ test.describe('Homepage Visual Tests', () => {
 
   test('Homepage - Contact form section', async ({ page }) => {
     // Scroll to and screenshot contact form if it exists
-    const contactForm = page.locator('form, [data-testid="contact-form"]').first();
+    const contactForm = page.locator('form, [data-testid="contact-section-form"]').first();
     if (await contactForm.isVisible()) {
       await contactForm.scrollIntoViewIfNeeded();
       await expect(contactForm).toHaveScreenshot('homepage-contact-form.png', {
@@ -135,7 +136,7 @@ test.describe('Homepage Visual Tests', () => {
 
   test('Homepage - Services section', async ({ page }) => {
     // Screenshot of services section if it exists
-    const servicesSection = page.locator('[data-testid="services"], section:has-text("Services")').first();
+    const servicesSection = page.locator('[data-testid="services-section-root"], section:has-text("Services")').first();
     if (await servicesSection.isVisible()) {
       await servicesSection.scrollIntoViewIfNeeded();
       await expect(servicesSection).toHaveScreenshot('homepage-services-section.png', {
@@ -148,28 +149,64 @@ test.describe('Homepage Visual Tests', () => {
   test('Homepage - Dark theme', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'Color scheme tests run on Chromium only');
     
-    // Set dark color scheme
     await page.emulateMedia({ colorScheme: 'dark' });
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'load' });
+    await page.waitForFunction(
+      () => {
+        const root = document.getElementById('root');
+        return root && (root.children.length > 0 || document.querySelector('main, nav, [role="main"]'));
+      },
+      { timeout: 20000 }
+    );
+    await page.waitForTimeout(2000);
     await page.waitForLoadState('networkidle');
+    await page.addStyleTag({
+      content: `
+        *, *::before, *::after {
+          animation-duration: 0s !important;
+          animation-delay: 0s !important;
+          transition-duration: 0s !important;
+          transition-delay: 0s !important;
+        }
+      `
+    });
     
     await expect(page).toHaveScreenshot('homepage-dark-theme.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
+      timeout: 15000
     });
   });
 
   test('Homepage - Light theme', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'Color scheme tests run on Chromium only');
     
-    // Set light color scheme
     await page.emulateMedia({ colorScheme: 'light' });
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'load' });
+    await page.waitForFunction(
+      () => {
+        const root = document.getElementById('root');
+        return root && (root.children.length > 0 || document.querySelector('main, nav, [role="main"]'));
+      },
+      { timeout: 20000 }
+    );
+    await page.waitForTimeout(2000);
     await page.waitForLoadState('networkidle');
+    await page.addStyleTag({
+      content: `
+        *, *::before, *::after {
+          animation-duration: 0s !important;
+          animation-delay: 0s !important;
+          transition-duration: 0s !important;
+          transition-delay: 0s !important;
+        }
+      `
+    });
     
     await expect(page).toHaveScreenshot('homepage-light-theme.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
+      timeout: 15000
     });
   });
 
