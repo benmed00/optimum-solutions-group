@@ -100,12 +100,17 @@ const config = async ({ mode }: ConfigEnv): Promise<UserConfig> => ({
       // Tree shaking optimizations
       treeshake: {
         moduleSideEffects: (id, external) => {
+          // Always preserve side effects for our own source files (React render calls,
+          // event listeners, etc. are top-level side effects that must not be stripped).
+          if (!id.includes('node_modules')) return true;
           // Preserve side effects for CSS and known libraries with side effects
-          return id.endsWith('.css') || 
+          return id.endsWith('.css') ||
                  id.includes('polyfill') ||
                  id.includes('web-vitals') ||
                  external;
         },
+        // Keep unknownGlobalSideEffects true for source files (handled above);
+        // setting false only applies to node_modules now.
         unknownGlobalSideEffects: false,
       },
     },
