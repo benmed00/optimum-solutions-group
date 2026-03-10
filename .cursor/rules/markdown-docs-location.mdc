@@ -1,0 +1,38 @@
+---
+description: Markdown files location and formatting — docs/ only, markdownlint-compliant
+globs: "**/*.md"
+alwaysApply: true
+---
+
+# Markdown Documentation Standards
+
+## 1. Location Rule
+
+**Never create or generate `.md` files in the project root.** All markdown documentation must be placed exclusively in the `docs/` folder and its subdirectories.
+
+**Allowed:** `README.md` in root, any `.md` under `docs/`, `.devcontainer/welcome.md`  
+**Not allowed:** New `.md` in root, docs scattered in `src/` or `cypress/`
+
+## 2. Formatting Rules (markdownlint — no Problems tab warnings)
+
+All generated `.md` files **must** pass `npm run lint:md` with zero warnings. Follow these rules:
+
+### Tables (MD060 / table-column-style)
+
+- Use **spaces around pipes** in separator rows. Each pipe must have a space to its left.
+- **Correct:** `| Col1 | Col2 |` and `| ---- | ---- |`
+- **Wrong:** `|Col1|Col2|` or `|---|-----|` (no space before pipe)
+
+### General Markdown
+
+- Headings: `#` with space after, no trailing `#`
+- Lists: consistent indentation (2 spaces)
+- Code fences: use fenced code blocks with language when applicable
+- No trailing whitespace, no multiple consecutive blank lines
+- Run `npm run lint:md:fix` to auto-fix when possible
+
+## 3. When Creating Documentation
+
+1. Place in `docs/guides/`, `docs/deployment/`, `docs/testing/`, `docs/analysis/`, or `docs/optimization-project/`
+2. Use lowercase, hyphenated filenames (e.g. `my-feature-guide.md`)
+3. Verify with `npm run lint:md` before committing

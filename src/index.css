@@ -81,8 +81,14 @@
     @apply border-border;
   }
 
+  html {
+    @apply overflow-x-hidden bg-background;
+    min-height: 100%;
+  }
+
   body {
-    @apply bg-background text-foreground font-inter;
+    @apply overflow-x-hidden bg-background text-foreground font-inter;
+    min-height: 100%;
   }
 }
 
@@ -188,6 +194,25 @@
 
   .testimonial-card:hover {
     box-shadow: var(--shadow-lg);
+  }
+
+  /* Back to top - respects safe areas, positioned to avoid overlapping content */
+  .back-to-top-position {
+    bottom: max(1.5rem, env(safe-area-inset-bottom));
+    right: max(1.25rem, env(safe-area-inset-right));
+  }
+
+  @media (min-width: 640px) {
+    .back-to-top-position {
+      bottom: 2rem;
+      right: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .back-to-top-position {
+      right: 3rem;
+    }
   }
 
   /* Section Spacing */

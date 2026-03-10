@@ -1,0 +1,63 @@
+---
+description: TypeScript typing standards — no inference, no double assertion
+globs: "**/*.ts"
+alwaysApply: false
+---
+
+# TypeScript Typing Standards
+
+## 1. No Type Inference — Explicit Types Everywhere
+
+**Every const, let, assertion, initialization, or declaration must have an explicit type.** Do not rely on TypeScript inference.
+
+```typescript
+// ❌ BAD — inference
+const items = getItems();
+const { result } = renderHook(() => useMyHook());
+const handler = (e: Event) => e.preventDefault();
+
+// ✅ GOOD — explicit types
+const items: Item[] = getItems();
+const { result }: RenderHookResult<MyHookReturn, void> = renderHook(() => useMyHook());
+const handler: (e: Event) => void = (e: Event): void => e.preventDefault();
+```
+
+Use type aliases for complex or repeated types (e.g. `RenderHookResult`, summary shapes).
+
+## 2. No Double Assertion
+
+**Never use `as unknown as T`** (double assertion) at call sites. Encapsulate in typed helpers when needed.
+
+```typescript
+// ❌ BAD — double assertion at call site
+const mock: MockType = value as unknown as MockType;
+Object.defineProperty(obj, 'prop', { value: mock as unknown as DomType });
+
+// ✅ GOOD — typed module with helper (single assertion)
+interface MockedModule {
+  readonly fn: MockType;
+}
+function getMockedModule(module: typeof ImportedModule): MockedModule {
+  // @ts-expect-error - jest.mock replaces at runtime; types differ
+  return module as MockedModule;
+}
+const module: MockedModule = getMockedModule(ImportedModule);
+const mock: MockType = module.fn;
+
+// ✅ GOOD — typed helper for mock-to-DOM
+function toDomType(mock: MockType): DomType {
+  // @ts-expect-error - Mock is partial; satisfies runtime usage
+  return mock as DomType;
+}
+Object.defineProperty(obj, 'prop', { value: toDomType(mock) });
+```
+
+## 3. When Assertion Is Required
+
+- Use **one** assertion per conversion; use `@ts-expect-error` when types don't overlap.
+- Prefer **typed helpers** that encapsulate the assertion.
+- Never use double assertion (`as unknown as T`) in the main code flow.
+
+## 4. Complex Objects
+
+Use interfaces, type aliases, and generics. Prefer `interface` for object shapes and `type` for unions/intersections.

@@ -1,0 +1,64 @@
+erDiagram
+    User ||--o{ Post : "authors"
+    User {
+        int id PK
+        string email
+        string firstName
+        string lastName
+        string role
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Contact ||--o| User : "optional"
+    Contact {
+        uuid id PK
+        string name
+        string email
+        string company
+        string phone
+        string projectType
+        string message
+        string timeline
+        datetime createdAt
+    }
+
+    AnalyticsEvent {
+        string id PK
+        string type
+        string category
+        string action
+        string sessionId
+        string url
+        int timestamp
+        object properties
+    }
+
+    AnalyticsSession {
+        string id PK
+        int startTime
+        int pageViews
+        int interactions
+        int duration
+    }
+
+    Post {
+        int id PK
+        string title
+        string slug
+        string content
+        string status
+        int authorId FK
+        datetime publishedAt
+        datetime createdAt
+    }
+
+    PerformanceMetrics {
+        object metrics
+        string userAgent
+        string url
+        int timestamp
+    }
+
+    AnalyticsEvent }o--|| AnalyticsSession : "belongs to"
+    PerformanceMetrics }o--|| AnalyticsSession : "associated"

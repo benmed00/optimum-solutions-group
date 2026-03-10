@@ -17,6 +17,11 @@ export type { WebVitalsMetric, CWV_THRESHOLDS };
 // Prevent duplicate web-vitals observer registrations across HMR/rerenders
 let __WEB_VITALS_INITIALIZED__ = false;
 
+/** Reset for testing - allows each test to get fresh device detection */
+export function __resetCoreWebVitalsForTesting(): void {
+  __WEB_VITALS_INITIALIZED__ = false;
+}
+
 interface DeviceCapabilities {
   isLowEndDevice: boolean;
   deviceMemory: number | null;

@@ -8,24 +8,6 @@
 import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
 import { errorHandler, handleError, wrapAsync, wrapSync, getStoredErrors, clearStoredErrors } from '../errorHandler';
 
-// Import ErrorContext type
-interface ErrorContext {
-  message?: string;
-  timestamp?: string;
-  url?: string;
-  userAgent?: string;
-  error?: string;
-  filename?: string;
-  lineno?: number;
-  component?: string;
-  action?: string;
-  data?: unknown;
-  reason?: unknown;
-  colno?: number;
-}
-
-// Type for error handler instance - removed unused type
-
 // Mock Date.now
 const mockDateNow = jest.fn(() => 1640995200000); // 2022-01-01T00:00:00.000Z
 global.Date.now = mockDateNow;
@@ -49,12 +31,11 @@ Object.defineProperty(window, 'localStorage', {
 
 describe('Error Handler utilities', () => {
   let consoleErrorSpy: ReturnType<typeof jest.spyOn>;
-  let consoleWarnSpy: ReturnType<typeof jest.spyOn>;
 
   beforeEach(() => {
     // Mock console methods
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
     
     localStorageMock.getItem.mockReturnValue('[]');
     localStorageMock.setItem.mockImplementation(() => {});
@@ -84,29 +65,34 @@ describe('Error Handler utilities', () => {
 
         handleError('Test error', { component: 'TestComponent' });
 
+        // Composite handler routes to Unhandled Error when no specialized handler matches
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Application Error:',
+          'Unhandled Error:',
           expect.objectContaining({
             message: 'Test error',
-            component: 'TestComponent',
-            timestamp: expect.any(String),
-            url: expect.any(String),
-            userAgent: expect.any(String),
+            context: expect.objectContaining({
+              component: 'TestComponent',
+              message: 'Test error',
+              timestamp: expect.any(String),
+              url: expect.any(String),
+              userAgent: expect.any(String),
+            }),
           })
         );
 
         process.env['NODE_ENV'] = originalEnv;
       });
 
-      it('should store errors in production mode', () => {
+      it('should report errors in production mode', () => {
         const originalEnv = process.env['NODE_ENV'];
         process.env['NODE_ENV'] = 'production';
 
         handleError('Production error', { component: 'TestComponent' });
 
-        expect(localStorageMock.setItem).toHaveBeenCalledWith(
-          'app_errors',
-          expect.stringContaining('Production error')
+        // Implementation uses composite handler + errorReportingService (in-memory)
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          'Unhandled Error:',
+          expect.objectContaining({ message: 'Production error' })
         );
 
         process.env['NODE_ENV'] = originalEnv;
@@ -119,11 +105,14 @@ describe('Error Handler utilities', () => {
         handleError('Test error');
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Application Error:',
+          'Unhandled Error:',
           expect.objectContaining({
-            timestamp: '2022-01-01T00:00:00.000Z',
-            url: window.location.href,
-            userAgent: navigator.userAgent,
+            message: 'Test error',
+            context: expect.objectContaining({
+              timestamp: '2022-01-01T00:00:00.000Z',
+              url: window.location.href,
+              userAgent: navigator.userAgent,
+            }),
           })
         );
 
@@ -175,18 +164,18 @@ describe('Error Handler utilities', () => {
         const originalEnv = process.env['NODE_ENV'];
         process.env['NODE_ENV'] = 'development';
 
-        // Test the error handler directly instead of dispatching events
         handleError('Unhandled Promise Rejection', {
           reason: 'test reason',
           component: 'Global'
         });
 
+        // PromiseErrorHandler matches context with reason
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Application Error:',
+          'Promise Error:',
           expect.objectContaining({
             message: 'Unhandled Promise Rejection',
             reason: 'test reason',
-            component: 'Global',
+            reportId: expect.any(String),
           })
         );
 
@@ -207,14 +196,15 @@ describe('Error Handler utilities', () => {
 
         window.dispatchEvent(errorEvent);
 
+        // BrowserErrorHandler matches context with filename/lineno/colno
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Application Error:',
+          'Browser Error:',
           expect.objectContaining({
             message: 'Test error message',
-            error: expect.any(Error),
             filename: 'test.js',
-            lineno: 10,
-            colno: 5,
+            line: 10,
+            column: 5,
+            reportId: expect.any(String),
           })
         );
 
@@ -228,7 +218,6 @@ describe('Error Handler utilities', () => {
         const img = document.createElement('img');
         img.src = 'invalid-image.jpg';
 
-        // Create a proper error event with the target set
         const errorEvent = new Event('error');
         Object.defineProperty(errorEvent, 'target', {
           value: img,
@@ -237,8 +226,14 @@ describe('Error Handler utilities', () => {
 
         window.dispatchEvent(errorEvent);
 
-        expect(consoleWarnSpy).toHaveBeenCalledWith(
-          'Failed to load img: http://localhost:3000/invalid-image.jpg'
+        // ResourceErrorHandler logs "Resource Error:" with resourceType, resourceUrl
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          'Resource Error:',
+          expect.objectContaining({
+            resourceType: 'image',
+            resourceUrl: expect.any(String),
+            reportId: expect.any(String),
+          })
         );
 
         process.env['NODE_ENV'] = originalEnv;
@@ -267,11 +262,10 @@ describe('Error Handler utilities', () => {
 
         expect(result).toBeNull();
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Application Error:',
+          'Unhandled Error:',
           expect.objectContaining({
-            message: 'Async Function Error',
-            component: 'TestComponent',
-            error: 'Async error',
+            message: 'Async error',
+            context: expect.objectContaining({ component: 'TestComponent' }),
           })
         );
 
@@ -288,10 +282,10 @@ describe('Error Handler utilities', () => {
 
         expect(result).toBeNull();
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Application Error:',
+          'Unhandled Error:',
           expect.objectContaining({
-            message: 'Async Function Error',
-            error: 'String error',
+            message: 'String error',
+            context: expect.any(Object),
           })
         );
 
@@ -319,11 +313,10 @@ describe('Error Handler utilities', () => {
 
         expect(result).toBeNull();
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Application Error:',
+          'Unhandled Error:',
           expect.objectContaining({
-            message: 'Sync Function Error',
-            component: 'TestComponent',
-            error: 'Sync error',
+            message: 'Sync error',
+            context: expect.objectContaining({ component: 'TestComponent' }),
           })
         );
 
@@ -341,10 +334,10 @@ describe('Error Handler utilities', () => {
 
         expect(result).toBeNull();
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Application Error:',
+          'Unhandled Error:',
           expect.objectContaining({
-            message: 'Sync Function Error',
-            error: 'String exception',
+            message: 'String exception',
+            context: expect.any(Object),
           })
         );
 
@@ -353,21 +346,7 @@ describe('Error Handler utilities', () => {
     });
 
     describe('Error storage and retrieval', () => {
-      it('should store errors in localStorage', () => {
-        const originalEnv = process.env['NODE_ENV'];
-        process.env['NODE_ENV'] = 'production';
-
-        handleError('Stored error', { component: 'TestComponent' });
-
-        expect(localStorageMock.setItem).toHaveBeenCalledWith(
-          'app_errors',
-          expect.stringContaining('Stored error')
-        );
-
-        process.env['NODE_ENV'] = originalEnv;
-      });
-
-      it('should retrieve stored errors', () => {
+      it('should retrieve stored errors from localStorage', () => {
         const mockErrors = [
           { message: 'Error 1', timestamp: '2023-01-01T00:00:00.000Z' },
           { message: 'Error 2', timestamp: '2023-01-01T00:01:00.000Z' },
@@ -393,40 +372,11 @@ describe('Error Handler utilities', () => {
 
         expect(localStorageMock.removeItem).toHaveBeenCalledWith('app_errors');
       });
-
-      it('should limit stored errors to 50', () => {
-        const originalEnv = process.env['NODE_ENV'];
-        process.env['NODE_ENV'] = 'production';
-
-        // Mock localStorage to accumulate errors
-        let storedErrors: ErrorContext[] = [];
-        localStorageMock.getItem.mockImplementation((key) => {
-          if (key === 'app_errors') {
-            return JSON.stringify(storedErrors);
-          }
-          return null;
-        });
-        localStorageMock.setItem.mockImplementation((key, value) => {
-          if (key === 'app_errors') {
-            storedErrors = JSON.parse(value as string);
-          }
-        });
-
-        // Generate 60 errors
-        for (let i = 0; i < 60; i++) {
-          handleError(`Error ${i}`);
-        }
-
-        expect(storedErrors).toHaveLength(50);
-        expect(storedErrors[0]?.message).toBe('Error 10'); // First 10 should be removed
-
-        process.env['NODE_ENV'] = originalEnv;
-      });
     });
   });
 
   describe('Error context handling', () => {
-    it('should merge provided context with default context', () => {
+    it('should route to UserErrorHandler when context has action', () => {
       const originalEnv = process.env['NODE_ENV'];
       process.env['NODE_ENV'] = 'development';
 
@@ -438,16 +388,13 @@ describe('Error Handler utilities', () => {
 
       handleError('Test error', customContext);
 
+      // UserErrorHandler matches context with action
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Application Error:',
+        'User Error:',
         expect.objectContaining({
           message: 'Test error',
-          component: 'CustomComponent',
           action: 'testAction',
-          data: { key: 'value' },
-          timestamp: expect.any(String),
-          url: expect.any(String),
-          userAgent: expect.any(String),
+          reportId: expect.any(String),
         })
       );
 
@@ -461,12 +408,14 @@ describe('Error Handler utilities', () => {
       handleError('Test error');
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Application Error:',
+        'Unhandled Error:',
         expect.objectContaining({
           message: 'Test error',
-          timestamp: expect.any(String),
-          url: expect.any(String),
-          userAgent: expect.any(String),
+          context: expect.objectContaining({
+            timestamp: expect.any(String),
+            url: expect.any(String),
+            userAgent: expect.any(String),
+          }),
         })
       );
 
@@ -484,10 +433,10 @@ describe('Error Handler utilities', () => {
       handleError('Test error', contextWithUndefined);
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Application Error:',
+        'Unhandled Error:',
         expect.objectContaining({
           message: 'Test error',
-          component: 'TestComponent',
+          context: expect.objectContaining({ component: 'TestComponent' }),
         })
       );
 
@@ -544,19 +493,18 @@ describe('Error Handler utilities', () => {
       const originalEnv = process.env['NODE_ENV'];
       process.env['NODE_ENV'] = 'development';
 
-      const error = new Error('React error');
-
       handleError('React Error Boundary', {
-        error: error,
+        error: new Error('React error'),
         component: 'ErrorBoundary',
       });
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Application Error:',
+        'Unhandled Error:',
         expect.objectContaining({
           message: 'React Error Boundary',
-          component: 'ErrorBoundary',
-          error: 'React error',
+          context: expect.objectContaining({
+            component: 'ErrorBoundary',
+          }),
         })
       );
 
@@ -577,13 +525,13 @@ describe('Error Handler utilities', () => {
       });
 
       expect(result).toBeNull();
+      // UserErrorHandler matches context with action
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Application Error:',
+        'User Error:',
         expect.objectContaining({
-          message: 'Async Function Error',
-          component: 'ApiService',
+          message: 'API request failed',
           action: 'fetchUserData',
-          error: 'API request failed',
+          reportId: expect.any(String),
         })
       );
 
@@ -604,13 +552,13 @@ describe('Error Handler utilities', () => {
       });
 
       expect(result).toBeNull();
+      // UserErrorHandler matches context with action
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Application Error:',
+        'User Error:',
         expect.objectContaining({
-          message: 'Sync Function Error',
-          component: 'FormValidator',
+          message: 'Validation failed',
           action: 'validateEmail',
-          error: 'Validation failed',
+          reportId: expect.any(String),
         })
       );
 

@@ -1,0 +1,6 @@
+stateDiagram-v2
+    [*] --> Ready: Mount
+    Ready --> Error: Component throws
+    Error --> Ready: User clicks Retry
+    Error --> Error: Stay on fallback
+    Ready --> [*]: Unmount

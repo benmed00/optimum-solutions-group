@@ -60,8 +60,8 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
       <meta name="language" content="English" />
       <meta name="author" content="Optimum Solutions Group" />
       
-      {/* Canonical URL */}
-      {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+      {/* Canonical URL - always include for homepage when not provided */}
+      <link rel="canonical" href={canonicalUrl || url} />
       
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />

@@ -165,7 +165,7 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
     if (callNow) {
       return func(...args) as ReturnType<T>;
     }
-    return undefined as any;
+    return undefined as ReturnType<T>;
   }
 
   function cancel(): void {
@@ -179,9 +179,9 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
     if (timeout) {
       clearTimeout(timeout);
       timeout = null;
-      return func(...([] as any)) as ReturnType<T>;
+      return func(...([] as unknown as Parameters<T>)) as ReturnType<T>;
     }
-    return undefined as any;
+    return undefined as ReturnType<T>;
   }
 
   function pending(): boolean {
@@ -597,7 +597,7 @@ export function debounceAdvanced<T extends (...args: unknown[]) => unknown>(
     const thisArg: ThisParameterType<T> = lastThis;
 
     lastArgs = undefined;
-    lastThis = undefined as any;
+    lastThis = undefined as ThisParameterType<T>;
     lastInvokeTime = time;
     result = func.apply(thisArg, args as Parameters<T>) as ReturnType<T>;
     return result;
@@ -645,7 +645,7 @@ export function debounceAdvanced<T extends (...args: unknown[]) => unknown>(
       return invokeFunc(time);
     }
     lastArgs = undefined;
-    lastThis = undefined as any;
+    lastThis = undefined as ThisParameterType<T>;
     return result;
   }
 
@@ -659,7 +659,7 @@ export function debounceAdvanced<T extends (...args: unknown[]) => unknown>(
     lastInvokeTime = 0;
     lastCallTime = 0;
     lastArgs = undefined;
-    lastThis = undefined as any;
+    lastThis = undefined as ThisParameterType<T>;
     timeout = null;
     maxTimeout = null;
   }
@@ -677,6 +677,8 @@ export function debounceAdvanced<T extends (...args: unknown[]) => unknown>(
     const isInvoking: boolean = shouldInvoke(time);
 
     lastArgs = args;
+    // Preserve caller's `this` for deferred invocation — required by debounce pattern
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     lastThis = this;
     lastCallTime = time;
 

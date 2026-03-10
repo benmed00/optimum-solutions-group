@@ -661,7 +661,7 @@ jobs:
     - name: Start Local Server
       run: |
         npx http-server dist -p 8080 --silent &
-        sleep 5
+        npx wait-on http://localhost:8080 -t 15000
 
     - name: Run Enhanced Lighthouse Audit
       run: |
@@ -695,9 +695,14 @@ jobs:
             cp lighthouse-report.html ./lighthouse-results.html
           fi
           
-          # Create lighthouse-results.json from our audit results
+          # Extract LHR from audit-runner output (scores + fullReport.lhr) for process-lighthouse
           if [ -f "seo-audit-results.json" ]; then
-            cp seo-audit-results.json ./lighthouse-results.json
+            node -e "
+              const fs = require('fs');
+              const d = JSON.parse(fs.readFileSync('seo-audit-results.json', 'utf8'));
+              const lhr = d.fullReport?.lhr || d.lhr || d;
+              fs.writeFileSync('lighthouse-results.json', JSON.stringify(lhr, null, 2));
+            "
           fi
         else
           echo "❌ Enhanced audit failed, trying fallback Lighthouse..."
@@ -713,24 +718,10 @@ jobs:
             --quiet || echo "⚠️ Lighthouse fallback also failed, but continuing..."
         fi
         
-        # Ensure we have some output files
-        if [ ! -f "lighthouse-results.json" ] && [ ! -f "seo-audit-results.json" ]; then
+        # Ensure we have some output files (process-lighthouse expects categories at root)
+        if [ ! -f "lighthouse-results.json" ]; then
           echo "⚠️ Creating fallback audit results"
-          cat > lighthouse-results.json << 'EOF'
-        {
-          "lhr": {
-            "categories": {
-              "seo": { "score": 0 },
-              "accessibility": { "score": 0 },
-              "best-practices": { "score": 0 }
-            },
-            "runtimeError": {
-              "code": "NO_FCP",
-              "message": "Audit failed due to rendering issues"
-            }
-          }
-        }
-        EOF
+          echo '{"categories":{"seo":{"score":0,"auditRefs":[]},"accessibility":{"score":0,"auditRefs":[]},"best-practices":{"score":0,"auditRefs":[]}},"audits":{}}' > lighthouse-results.json
         fi
 
     - name: Process Lighthouse Results

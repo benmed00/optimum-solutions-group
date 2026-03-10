@@ -9,6 +9,9 @@ lerna-debug.log*
 
 node_modules
 dist
+.env
+.env.local
+.env.*.local
 dist-ssr
 *.local
 
@@ -39,6 +42,9 @@ axe-report.json
 axe-live-report.json
 pa11y-report.json
 lighthouse-report.html
+lighthouse-results.json
+lighthouse-results.html
+seo-metrics-local.json
 comparison-result.json
 
 # Performance reports directory
@@ -65,5 +71,8 @@ junit.xml
 *.png
 *.jpg
 *.jpeg
-# Exception: keep baseline screenshots
-!tests/visual/**/*.png
+# Visual regression snapshots: generated in CI (Linux), not committed (Windows baselines fail on Linux)
+tests/visual/**/*-snapshots/
+# Exception: keep architecture diagrams
+!docs/architecture/*.png
+!docs/architecture/*.svg

@@ -1,0 +1,36 @@
+flowchart LR
+    subgraph Actors
+        Visitor[Visitor]
+        User[User]
+    end
+
+    subgraph UseCases["Use Cases"]
+        UC1[Browse landing page]
+        UC2[Scroll to sections]
+        UC3[Use Project Estimator]
+        UC4[Submit contact form]
+        UC5[View analytics dashboard]
+        UC6[Install PWA]
+        UC7[Use high-contrast mode]
+        UC8[View component showcase]
+        UC9[Read PWA info]
+        UC10[Handle offline mode]
+    end
+
+    Visitor --> UC1
+    Visitor --> UC2
+    Visitor --> UC3
+    Visitor --> UC4
+    Visitor --> UC5
+    Visitor --> UC6
+    Visitor --> UC7
+    Visitor --> UC8
+    Visitor --> UC9
+    Visitor --> UC10
+    User --> UC1
+    User --> UC2
+    User --> UC3
+    User --> UC4
+    User --> UC5
+    User --> UC6
+    User --> UC7

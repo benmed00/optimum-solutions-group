@@ -43,7 +43,7 @@ jobs:
     - name: Install Dependencies
       run: |
         npm ci --legacy-peer-deps || npm ci --force
-        npx playwright install chromium firefox webkit
+        npx playwright install chromium
 
     - name: Build Application
       run: |
@@ -51,23 +51,54 @@ jobs:
 
     - name: Start Test Server
       run: |
-        npm run preview &
-        npx wait-on http://localhost:4173 -t 30000
+        npx vite preview --port 8080 &
+        npx wait-on http://localhost:8080 -t 30000
+        sleep 5
+
+    - name: Get baseline run ID (PR branch or main)
+      id: baseline-run
+      run: |
+        # Try current branch first (for iterative runs), then main
+        BRANCH="${{ github.head_ref || github.ref_name }}"
+        RUN_ID=$(gh run list --repo ${{ github.repository }} --branch "$BRANCH" --workflow=visual-regression.yml --limit 5 --json databaseId,conclusion,status -q '.[] | select(.status=="completed" and .conclusion=="success") | .databaseId' 2>/dev/null | head -1)
+        if [ -z "$RUN_ID" ]; then
+          RUN_ID=$(gh run list --repo ${{ github.repository }} --branch main --workflow=visual-regression.yml --limit 1 --json databaseId,conclusion -q '.[] | select(.conclusion=="success") | .databaseId' 2>/dev/null | head -1)
+        fi
+        echo "run_id=${RUN_ID:-}" >> $GITHUB_OUTPUT
+        echo "Baseline run_id: ${RUN_ID:-none}"
 
     - name: Download Previous Visual Snapshots
-      if: github.event_name == 'pull_request'
+      if: steps.baseline-run.outputs.run_id != ''
       uses: actions/download-artifact@v4
       continue-on-error: true
       with:
         name: visual-snapshots
-        path: ./tests/visual/screenshots
+        path: .
+        run-id: ${{ steps.baseline-run.outputs.run_id }}
+
+    - name: Check for baseline snapshots
+      id: baselines
+      run: |
+        SNAPSHOT_DIR="tests/visual/homepage.spec.js-snapshots"
+        if [ ! -d "$SNAPSHOT_DIR" ] || [ -z "$(ls -A $SNAPSHOT_DIR 2>/dev/null)" ]; then
+          echo "has_baselines=false" >> $GITHUB_OUTPUT
+          echo "No baseline snapshots found - will create with --update-snapshots"
+        else
+          echo "has_baselines=true" >> $GITHUB_OUTPUT
+          echo "Found $(ls -1 $SNAPSHOT_DIR 2>/dev/null | wc -l) baseline snapshots"
+        fi
 
     - name: Run Visual Regression Tests
-      run: |
-        # Run visual tests with Playwright
-        npx playwright test --config=playwright.visual.config.js
       env:
-        UPDATE_SNAPSHOTS: ${{ github.event.inputs.update_snapshots == 'true' }}
+        UPDATE_SNAPSHOTS: ${{ steps.baselines.outputs.has_baselines == 'false' || github.event.inputs.update_snapshots == 'true' }}
+      run: |
+        echo "UPDATE_SNAPSHOTS=$UPDATE_SNAPSHOTS"
+        UPDATE_FLAG=""
+        if [ "$UPDATE_SNAPSHOTS" = "true" ]; then
+          UPDATE_FLAG="--update-snapshots"
+          echo "Creating/updating baseline snapshots (first run or intentional update)"
+        fi
+        npx playwright test --config=playwright.visual.config.js $UPDATE_FLAG
 
     - name: Upload Visual Snapshots
       if: always()
@@ -75,7 +106,7 @@ jobs:
       with:
         name: visual-snapshots
         path: |
-          ./tests/visual/screenshots
+          ./tests/visual
           ./test-results
         retention-days: 30
 

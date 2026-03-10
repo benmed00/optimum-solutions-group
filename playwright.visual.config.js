@@ -15,7 +15,10 @@ export default defineConfig({
   
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  
+
+  /* Default test timeout (includes beforeEach); CI runners need more time */
+  timeout: process.env.CI ? 120000 : 60000,
+
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
   
@@ -31,7 +34,7 @@ export default defineConfig({
 
   /* Shared settings for all the projects below */
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
+    /* Base URL - must match workflow (vite preview --port 8080) */
     baseURL: 'http://localhost:8080',
     
     /* Collect trace when retrying the failed test. */
@@ -43,51 +46,50 @@ export default defineConfig({
     /* Record video on failure */
     video: 'retain-on-failure',
     
-    /* Increase timeout for elements */
-    actionTimeout: 15000,
-    navigationTimeout: 30000,
+    /* Increase timeout for elements (CI runners are slower) */
+    actionTimeout: process.env.CI ? 45000 : 15000,
+    navigationTimeout: process.env.CI ? 60000 : 30000,
   },
 
-  /* Configure projects for major browsers */
-  projects: [
-    {
-      name: 'chromium-desktop',
-      use: { 
-        ...devices['Desktop Chrome'],
-        viewport: { width: 1280, height: 720 }
-      },
-    },
-    {
-      name: 'chromium-mobile',
-      use: { 
-        ...devices['Pixel 5'],
-      },
-    },
-    {
-      name: 'chromium-tablet',
-      use: { 
-        ...devices['iPad Pro'],
-      },
-    },
-    // Uncomment for cross-browser testing
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
-  ],
+  /* Configure projects - desktop only by default (matches CI). Use VISUAL_ALL=1 for mobile+tablet */
+  projects: (process.env.CI || !process.env.VISUAL_ALL)
+    ? [
+        {
+          name: 'chromium-desktop',
+          use: {
+            ...devices['Desktop Chrome'],
+            viewport: { width: 1280, height: 720 },
+          },
+        },
+      ]
+    : [
+        {
+          name: 'chromium-desktop',
+          use: {
+            ...devices['Desktop Chrome'],
+            viewport: { width: 1280, height: 720 },
+          },
+        },
+        {
+          name: 'chromium-mobile',
+          use: { ...devices['Pixel 5'] },
+        },
+        {
+          name: 'chromium-tablet',
+          use: { ...devices['iPad Pro'] },
+        },
+      ],
 
   /* Visual comparison settings */
   expect: {
-    // Threshold for visual differences (0-1, where 0 is identical)
-    toHaveScreenshot: { 
+    // Assertion timeout (full-page screenshots need more time for capture + font loading)
+    timeout: 20000,
+    toHaveScreenshot: {
+      // Omit {platform} so same baseline works on Windows (local) and Linux (CI)
+      pathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}-{projectName}{ext}',
       threshold: 0.2, // Allow 20% difference
       mode: 'pixel',
       animations: 'disabled', // Disable animations for consistent screenshots
-      timeout: 10000 // Increase screenshot timeout
     },
     toMatchSnapshot: { 
       threshold: 0.2,

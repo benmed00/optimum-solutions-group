@@ -1,0 +1,19 @@
+flowchart TB
+    subgraph External["External Systems"]
+        Visitor[Visitor]
+        User[User]
+    end
+
+    subgraph System["Optimum Solutions Group"]
+        WebApp[Web Application]
+    end
+
+    subgraph ExternalSystems["External Systems"]
+        API[Optimum API]
+        GA[Google Analytics]
+    end
+
+    Visitor -->|Browse, Contact| WebApp
+    User -->|Browse, Analytics, PWA| WebApp
+    WebApp -->|REST, Auth| API
+    WebApp -.->|Events, Web Vitals| GA

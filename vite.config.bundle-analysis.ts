@@ -1,14 +1,11 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react-swc';
 import { resolve } from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
   plugins: [
-    react({
-      // Enable React Fast Refresh for better development experience
-      fastRefresh: true,
-    }),
+    react(),
     // Bundle analyzer
     visualizer({
       filename: 'dist/stats.html',

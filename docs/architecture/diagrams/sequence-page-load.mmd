@@ -1,0 +1,28 @@
+sequenceDiagram
+    participant User
+    participant Browser
+    participant App
+    participant ErrorBoundary
+    participant AccessibilityProvider
+    participant QueryClient
+    participant Router
+    participant Index
+    participant LoadingScreen
+    participant Navigation
+    participant HeroSection
+
+    User->>Browser: Navigate to /
+    Browser->>App: Mount React app
+    App->>ErrorBoundary: Wrap children
+    ErrorBoundary->>AccessibilityProvider: Wrap children
+    AccessibilityProvider->>QueryClient: Wrap children
+    QueryClient->>Router: Wrap children
+    Router->>Index: Render Index (route /)
+    Index->>LoadingScreen: Show while loading
+    Index->>Index: usePageLoad()
+    Index->>Index: useAnalytics()
+    LoadingScreen-->>Index: Loading complete
+    Index->>Navigation: Render
+    Index->>HeroSection: Render
+    Index->>Index: Lazy load ServicesSection, IoTSection, etc.
+    Index-->>User: Display landing page

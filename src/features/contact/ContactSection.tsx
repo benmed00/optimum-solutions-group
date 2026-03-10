@@ -3,9 +3,11 @@ import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Textarea } from '@/shared/ui/textarea';
 import { useToast } from '@/shared/hooks/use-toast';
+import { useTestId } from '@/shared/hooks/useTestId';
 import { Mail, Phone, MapPin, Calendar, CheckCircle } from 'lucide-react';
 
 const ContactSection = () => {
+  const tid = useTestId('ContactSection');
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
@@ -112,7 +114,7 @@ const ContactSection = () => {
   ];
 
   return (
-    <section id="contact" className="section-padding bg-gradient-subtle">
+    <section id="contact" {...tid('root')} className="section-padding bg-gradient-subtle">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-20">
           <h2 className="font-playfair italic text-5xl md:text-6xl lg:text-7xl font-light text-foreground mb-6 leading-tight">
@@ -126,18 +128,19 @@ const ContactSection = () => {
 
         <div className="grid lg:grid-cols-2 gap-16 mb-16">
           {/* Contact Form */}
-          <div className="bg-card p-8 rounded-3xl border border-border">
+          <div {...tid('form-container')} className="bg-card p-8 rounded-3xl border border-border">
             <h3 className="text-2xl font-semibold text-foreground mb-6">
               Get Your Free Consultation
             </h3>
             
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form {...tid('form')} onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="contact-name" className="block text-sm font-medium text-foreground mb-2">
                     Full Name *
                   </label>
                   <Input
+                    {...tid('input-name')}
                     id="contact-name"
                     name="name"
                     value={formData.name}
@@ -168,6 +171,7 @@ const ContactSection = () => {
                     Company Name
                   </label>
                   <Input
+                    {...tid('input-company')}
                     id="contact-company"
                     name="company"
                     value={formData.company}
@@ -196,6 +200,7 @@ const ContactSection = () => {
                     Project Type
                   </label>
                   <select
+                    {...tid('select-project-type')}
                     id="contact-project-type"
                     name="projectType"
                     value={formData.projectType}
@@ -237,6 +242,7 @@ const ContactSection = () => {
                   Project Details *
                 </label>
                 <Textarea
+                  {...tid('textarea-message')}
                   id="contact-message"
                   name="message"
                   value={formData.message}
@@ -248,6 +254,7 @@ const ContactSection = () => {
               </div>
 
               <Button 
+                {...tid('submit-button')}
                 type="submit" 
                 disabled={isSubmitting}
                 className="w-full btn-hero text-lg py-6"

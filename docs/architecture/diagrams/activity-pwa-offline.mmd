@@ -1,0 +1,12 @@
+flowchart TD
+    A[User navigates] --> B{Online?}
+    B -->|Yes| C[Load from network]
+    B -->|No| D[Service Worker intercepts]
+    D --> E{Cached?}
+    E -->|Yes| F[Return cached response]
+    E -->|No| G[offline.html]
+    G --> H[Show offline message]
+    H --> I[Reconnect button]
+    I --> J{Network restored?}
+    J -->|Yes| K[Reload page]
+    J -->|No| H

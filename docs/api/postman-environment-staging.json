@@ -1,0 +1,25 @@
+{
+  "id": "optimum-solutions-group-env-staging",
+  "name": "Optimum Solutions Group - Staging",
+  "values": [
+    {
+      "key": "base_url",
+      "value": "https://api.staging.optimumsolutions.com/v1",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment"
+}

@@ -1,6 +1,3 @@
-// Early diagnostic logging
-console.log('🔵 [INIT] main.tsx starting to load...', new Date().toISOString());
-
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
@@ -8,15 +5,12 @@ import './index.css'
 import './shared/styles/accessibility.css'
 import { serviceWorkerManager } from './shared/utils/serviceWorkerManager'
 
-console.log('🔵 [INIT] All imports loaded successfully');
-
-console.log('🔵 [INIT] Setting up service worker and accessibility...');
+const isDev: boolean = import.meta.env.DEV;
 
 // Performance optimization: Register service worker after initial render
 setTimeout(() => {
-  console.log('🔵 [SW] Registering service worker...');
   serviceWorkerManager.register().catch(err => {
-    console.warn('⚠️ [SW] Service worker registration failed:', err);
+    if (isDev) console.warn('🔵 [SW] Service worker registration failed:', err);
   });
 }, 1000)
 
@@ -41,17 +35,12 @@ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   document.body.classList.add('prefers-reduced-motion')
 }
 
-console.log('🔵 [INIT] About to initialize React application...');
-console.log('🔵 [INIT] Document ready state:', document.readyState);
-console.log('🔵 [INIT] Root element exists:', !!document.getElementById('root'));
-
 // Robust initialization with error handling
-const rootElement = document.getElementById('root');
+const rootElement: HTMLElement | null = document.getElementById('root');
 
 if (!rootElement) {
-  const errorMsg = '❌ FATAL: Root element #root not found in DOM';
-  console.error(errorMsg);
-  console.error('Document body HTML:', document.body.innerHTML.substring(0, 500));
+  const errorMsg: string = '❌ FATAL: Root element #root not found in DOM';
+  if (isDev) console.error(errorMsg, document.body.innerHTML.substring(0, 500));
   document.body.innerHTML = `
     <div style="padding: 40px; text-align: center; font-family: system-ui; background: #fee; min-height: 100vh;">
       <h1 style="color: #dc2626; margin-bottom: 16px;">⚠️ Root Element Not Found</h1>
@@ -61,21 +50,15 @@ if (!rootElement) {
   `;
 } else {
   try {
-    console.log('✅ [INIT] Root element found successfully');
-    console.log('🔵 [INIT] Creating React root...');
-    const root = ReactDOM.createRoot(rootElement);
-    
-    console.log('🔵 [INIT] Rendering App component...');
+    const root: ReactDOM.Root = ReactDOM.createRoot(rootElement);
     root.render(
       <React.StrictMode>
         <App />
       </React.StrictMode>
     );
-    console.log('✅ [INIT] React app rendered successfully!');
-    console.log('✅ [INIT] Application initialization complete');
   } catch (error) {
-    const errorMsg = '❌ FATAL: Failed to initialize React application';
-    console.error(errorMsg, error);
+    const errorMsg: string = '❌ FATAL: Failed to initialize React application';
+    if (isDev) console.error(errorMsg, error);
     console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     rootElement.innerHTML = `
       <div style="padding: 40px; text-align: center; font-family: system-ui; background: #fee; min-height: 100vh;">

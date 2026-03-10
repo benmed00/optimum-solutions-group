@@ -1,0 +1,7 @@
+stateDiagram-v2
+    [*] --> Hidden: Page load
+    Hidden --> Visible: Delay elapsed & not installed
+    Visible --> Dismissed: User dismisses
+    Visible --> Installed: User installs
+    Dismissed --> [*]
+    Installed --> [*]

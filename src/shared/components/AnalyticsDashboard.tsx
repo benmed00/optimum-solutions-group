@@ -5,7 +5,7 @@
  * user behavior, performance metrics, and insights.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
@@ -40,33 +40,10 @@ import {
   CheckCircle,
   Download,
 } from 'lucide-react';
-import analytics, { type AnalyticsEvent, type UserSession } from '@/shared/services/analytics';
+import { useAnalyticsData } from '@/shared/hooks/useAnalyticsData';
+import analytics from '@/shared/services/analytics';
 
 // =========================== TYPES ===========================
-
-interface AnalyticsData {
-  events: AnalyticsEvent[];
-  session: UserSession;
-  metrics: {
-    totalPageViews: number;
-    uniqueVisitors: number;
-    averageSessionDuration: number;
-    bounceRate: number;
-    totalEvents: number;
-    conversionRate: number;
-  };
-  deviceBreakdown: Array<{ name: string; value: number; percentage: number }>;
-  topPages: Array<{ url: string; views: number; time: number }>;
-  eventsByCategory: Array<{ category: string; count: number }>;
-  timeSeriesData: Array<{ timestamp: string; events: number; users: number }>;
-  performanceMetrics: {
-    avgLCP: number;
-    avgFID: number;
-    avgCLS: number;
-    avgFCP: number;
-    avgTTFB: number;
-  };
-}
 
 interface DashboardProps {
   timeRange?: '1h' | '24h' | '7d' | '30d' | '90d';
@@ -85,87 +62,23 @@ export const AnalyticsDashboard: React.FC<DashboardProps> = ({
   compact = false,
   showExportOptions = true,
 }) => {
-  const [data, setData] = useState<AnalyticsData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
-  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
-  // =========================== DATA FETCHING ===========================
+  // =========================== DATA FETCHING (React Query) ===========================
 
-  const fetchAnalyticsData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  const {
+    data,
+    isLoading: loading,
+    isError: isErrorState,
+    error: queryError,
+    refetch,
+    dataUpdatedAt,
+  } = useAnalyticsData(timeRange, {
+    refetchInterval: autoRefresh ? refreshInterval : false,
+  });
 
-      // In a real implementation, this would fetch from your analytics API
-      // For now, we'll simulate data based on the current session and stored events
-      const session = analytics.getSession();
-      
-      // Simulate fetching stored events (in real implementation, this would be from your backend)
-      const events: AnalyticsEvent[] = []; // This would be fetched from your analytics API
-      
-      const simulatedData: AnalyticsData = {
-        events,
-        session: session,
-        metrics: {
-          totalPageViews: session.pageViews || 1,
-          uniqueVisitors: 1, // Would be calculated from your backend
-          averageSessionDuration: session.duration / 1000 / 60, // Convert to minutes
-          bounceRate: session.bounceRate ? 100 : 0,
-          totalEvents: events.length,
-          conversionRate: 0, // Would be calculated based on goals
-        },
-        deviceBreakdown: [
-          { name: 'Desktop', value: 65, percentage: 65 },
-          { name: 'Mobile', value: 30, percentage: 30 },
-          { name: 'Tablet', value: 5, percentage: 5 },
-        ],
-        topPages: [
-          { url: '/', views: session.pageViews || 1, time: session.timeOnPage / 1000 },
-        ],
-        eventsByCategory: [
-          { category: 'navigation', count: session.pageViews || 1 },
-          { category: 'engagement', count: session.interactions || 0 },
-        ],
-        timeSeriesData: [
-          { timestamp: new Date(Date.now() - 3600000).toISOString(), events: 5, users: 3 },
-          { timestamp: new Date(Date.now() - 1800000).toISOString(), events: 8, users: 5 },
-          { timestamp: new Date().toISOString(), events: session.interactions + session.pageViews, users: 1 },
-        ],
-        performanceMetrics: {
-          avgLCP: 2200,
-          avgFID: 80,
-          avgCLS: 0.08,
-          avgFCP: 1800,
-          avgTTFB: 600,
-        },
-      };
-
-      setData(simulatedData);
-      setLastUpdate(new Date());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch analytics data');
-    } finally {
-      setLoading(false);
-    }
-  }, []); // timeRange not actually used in function body
-
-  // Initial data fetch
-  useEffect(() => {
-    fetchAnalyticsData();
-  }, [fetchAnalyticsData]);
-
-  // Auto-refresh
-  useEffect(() => {
-    if (!autoRefresh) return;
-
-    const interval = setInterval(() => {
-      fetchAnalyticsData();
-    }, refreshInterval);
-
-    return () => clearInterval(interval);
-  }, [autoRefresh, refreshInterval, fetchAnalyticsData]);
+  const error = isErrorState ? (queryError instanceof Error ? queryError.message : 'Failed to fetch analytics data') : null;
+  const lastUpdate = dataUpdatedAt ? new Date(dataUpdatedAt) : new Date();
 
   // =========================== COMPUTED VALUES ===========================
 
@@ -560,7 +473,7 @@ export const AnalyticsDashboard: React.FC<DashboardProps> = ({
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={fetchAnalyticsData}
+            onClick={() => refetch()}
             disabled={loading}
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />

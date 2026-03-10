@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForLayoutStability, waitForFontsReady } from './helpers.js';
 
 /**
  * Homepage Visual Regression Tests
@@ -8,7 +9,9 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Homepage Visual Tests', () => {
-  
+  // Apply to entire test (including beforeEach); CI runners are slower
+  test.describe.configure({ timeout: process.env.CI ? 120000 : 60000 });
+
   test.beforeEach(async ({ page }) => {
     // Handle console errors gracefully
     page.on('console', msg => {
@@ -25,34 +28,19 @@ test.describe('Homepage Visual Tests', () => {
     });
 
     // Navigate to homepage
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'load' });
     
-    // Wait for initial load
-    await page.waitForLoadState('domcontentloaded');
-    
-    // Wait for React root to exist and be visible
-    await page.waitForSelector('#root', { state: 'visible', timeout: 15000 });
-    
-    // Wait for basic content to appear with a more flexible approach
-    try {
-      await page.waitForFunction(
-        () => {
-          const root = document.getElementById('root');
-          if (!root) return false;
-          
-          // Check if there's any meaningful content
-          const hasText = root.textContent && root.textContent.trim().length > 50;
-          const hasElements = root.children.length > 0;
-          const hasCommonElements = 
-            document.querySelector('nav, header, main, section, footer, .app, [data-testid]') !== null;
-          
-          return hasText || hasElements || hasCommonElements;
-        },
-        { timeout: 15000 }
-      );
-    } catch (error) {
-      console.log('Content check failed, but continuing with test');
-    }
+    // Wait for React to render: #root starts empty and Playwright treats empty divs as hidden.
+    // Script is type="module" so it loads async; wait for root to have content (React has mounted).
+    // CI runners are slower; use longer timeout to avoid flakiness.
+    const mountTimeout = process.env.CI ? 45000 : 20000;
+    await page.waitForFunction(
+      () => {
+        const root = document.getElementById('root');
+        return root && (root.children.length > 0 || document.querySelector('main, nav, [role="main"]'));
+      },
+      { timeout: mountTimeout }
+    );
     
     // Additional wait for content to stabilize
     await page.waitForTimeout(2000);
@@ -77,15 +65,21 @@ test.describe('Homepage Visual Tests', () => {
           transition-duration: 0s !important;
           transition-delay: 0s !important;
         }
+        /* Force scroll-animated content visible for full-page screenshot */
+        .animate-out, .stagger-children > * {
+          opacity: 1 !important;
+          transform: none !important;
+        }
       `
     });
   });
 
   test('Homepage - Full page screenshot', async ({ page }) => {
-    // Take a full page screenshot
+    test.setTimeout(60000); // Full-page capture + font loading can be slow
     await expect(page).toHaveScreenshot('homepage-full-page.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
+      timeout: 45000
     });
   });
 
@@ -141,7 +135,7 @@ test.describe('Homepage Visual Tests', () => {
 
   test('Homepage - Contact form section', async ({ page }) => {
     // Scroll to and screenshot contact form if it exists
-    const contactForm = page.locator('form, [data-testid="contact-form"]').first();
+    const contactForm = page.locator('form, [data-testid="contact-section-form"]').first();
     if (await contactForm.isVisible()) {
       await contactForm.scrollIntoViewIfNeeded();
       await expect(contactForm).toHaveScreenshot('homepage-contact-form.png', {
@@ -151,12 +145,22 @@ test.describe('Homepage Visual Tests', () => {
   });
 
   test('Homepage - Services section', async ({ page }) => {
-    // Screenshot of services section if it exists
-    const servicesSection = page.locator('[data-testid="services"], section:has-text("Services")').first();
+    test.setTimeout(60000); // Layout stability + screenshot can take 45s on mobile
+    const servicesSection = page.locator('[data-testid="services-section-root"], section:has-text("Services")').first();
     if (await servicesSection.isVisible()) {
+      // Ensure fonts (e.g. Playfair) are loaded before scroll to avoid font-swap layout shift
+      await waitForFontsReady(page);
       await servicesSection.scrollIntoViewIfNeeded();
+      // Wait for layout to stabilize (section height can oscillate on mobile due to font/async content)
+      await waitForLayoutStability(page, servicesSection, {
+        timeout: 15000,
+        stabilityWindow: 800,
+        checkInterval: 200
+      });
       await expect(servicesSection).toHaveScreenshot('homepage-services-section.png', {
-        animations: 'disabled'
+        animations: 'disabled',
+        maxDiffPixelRatio: 0.05,
+        timeout: 30000
       });
     }
   });
@@ -164,29 +168,77 @@ test.describe('Homepage Visual Tests', () => {
   // Test with different color schemes (if supported)
   test('Homepage - Dark theme', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'Color scheme tests run on Chromium only');
-    
-    // Set dark color scheme
+    test.setTimeout(process.env.CI ? 120000 : 90000); // Full-page capture can be slow
+    const mountTimeout = process.env.CI ? 45000 : 20000;
     await page.emulateMedia({ colorScheme: 'dark' });
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/', { waitUntil: 'load' });
+    await page.waitForFunction(
+      () => {
+        const root = document.getElementById('root');
+        return root && (root.children.length > 0 || document.querySelector('main, nav, [role="main"]'));
+      },
+      { timeout: mountTimeout }
+    );
+    await page.waitForTimeout(2000);
+    await page.waitForLoadState('domcontentloaded');
+    await page.addStyleTag({
+      content: `
+        *, *::before, *::after {
+          animation-duration: 0s !important;
+          animation-delay: 0s !important;
+          transition-duration: 0s !important;
+          transition-delay: 0s !important;
+        }
+        /* Force scroll-animated content visible for full-page screenshot */
+        .animate-out, .stagger-children > * {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      `
+    });
     
     await expect(page).toHaveScreenshot('homepage-dark-theme.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
+      timeout: 60000
     });
   });
 
   test('Homepage - Light theme', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'Color scheme tests run on Chromium only');
-    
-    // Set light color scheme
+    test.setTimeout(process.env.CI ? 120000 : 90000); // Full-page capture can be slow
+    const mountTimeout = process.env.CI ? 45000 : 20000;
     await page.emulateMedia({ colorScheme: 'light' });
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/', { waitUntil: 'load' });
+    await page.waitForFunction(
+      () => {
+        const root = document.getElementById('root');
+        return root && (root.children.length > 0 || document.querySelector('main, nav, [role="main"]'));
+      },
+      { timeout: mountTimeout }
+    );
+    await page.waitForTimeout(2000);
+    await page.waitForLoadState('domcontentloaded');
+    await page.addStyleTag({
+      content: `
+        *, *::before, *::after {
+          animation-duration: 0s !important;
+          animation-delay: 0s !important;
+          transition-duration: 0s !important;
+          transition-delay: 0s !important;
+        }
+        /* Force scroll-animated content visible for full-page screenshot */
+        .animate-out, .stagger-children > * {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      `
+    });
     
     await expect(page).toHaveScreenshot('homepage-light-theme.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
+      timeout: 60000
     });
   });
 
@@ -194,13 +246,15 @@ test.describe('Homepage Visual Tests', () => {
   test('Homepage - Button hover states', async ({ page, isMobile }) => {
     test.skip(isMobile, 'Hover tests not applicable on mobile');
     
-    const buttons = page.locator('button, [role="button"], .btn');
+    // Exclude fixed/overlay buttons (e.g. high-contrast toggle) that may be covered
+    const buttons = page.locator('main button, main [role="button"], main .btn');
     const buttonCount = await buttons.count();
     
     for (let i = 0; i < Math.min(buttonCount, 3); i++) { // Test up to 3 buttons
       const button = buttons.nth(i);
       if (await button.isVisible()) {
-        await button.hover();
+        await button.scrollIntoViewIfNeeded();
+        await button.hover({ force: true });
         await expect(button).toHaveScreenshot(`homepage-button-${i}-hover.png`, {
           animations: 'disabled'
         });

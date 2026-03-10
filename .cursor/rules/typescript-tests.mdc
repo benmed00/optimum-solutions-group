@@ -1,0 +1,93 @@
+---
+description: TypeScript typing standards for test files — mocks, renderHook, assertions
+globs: "**/*.test.ts" "**/*.test.tsx" "**/__tests__/**"
+alwaysApply: false
+---
+
+# TypeScript Test Typing Standards
+
+Apply in addition to [typescript-no-inference.mdc](./typescript-no-inference.mdc) for all test files.
+
+## 1. Mock Types — Explicit Interfaces
+
+Define interfaces for mocks and use typed helpers instead of `as any` or double assertions.
+
+```typescript
+// ❌ BAD — any or double assertion
+const mockPerformance = { now: jest.fn() } as any;
+Object.defineProperty(global, 'performance', { value: mock as unknown as Performance });
+
+// ✅ GOOD — typed mock interface + helper
+interface MockPerformance {
+  now: jest.Mock<() => number>;
+  getEntriesByType: jest.Mock<() => PerformanceEntry[]>;
+}
+function toDomPerformance(mock: MockPerformance): Performance {
+  return mock as Performance;
+}
+Object.defineProperty(global, 'performance', { value: toDomPerformance(mockPerformance) });
+```
+
+## 2. renderHook Results — Explicit Return Types
+
+Type `renderHook` results and destructured values.
+
+```typescript
+// ❌ BAD — inference
+const { result } = renderHook(() => useMyHook());
+
+// ✅ GOOD — explicit type
+type UseMyHookReturn = ReturnType<typeof useMyHook>;
+type RenderResult = RenderHookResult<UseMyHookReturn, void>;
+const { result }: RenderResult = renderHook(() => useMyHook());
+```
+
+## 3. Global Object Mocking
+
+Use `Record<string, unknown>` for `delete` and extended `globalThis` for assignments.
+
+```typescript
+// ❌ BAD — any
+(global as any).window = mockWindow;
+delete (global as any).performance;
+
+// ✅ GOOD — typed extensions
+const g = global as typeof globalThis & { window?: Window; document?: Document; performance?: Performance };
+g.window = mockWindow;
+delete (global as Record<string, unknown>).performance;
+```
+
+## 4. Jest Mocks — Typed Module Mocks
+
+Type mocked modules and their return values.
+
+```typescript
+// ❌ BAD — untyped
+const mockFetch = jest.fn();
+(mockAnalytics.trackEvent as jest.Mock).mockReturnValue(undefined);
+
+// ✅ GOOD — explicit types
+const mockFetch: jest.Mock<Promise<Response>> = jest.fn();
+(mockAnalytics.trackEvent as jest.Mock<void, [string, unknown]>).mockReturnValue(undefined);
+```
+
+## 5. Assertions — Typed expect Targets
+
+Use explicit types for variables passed to `expect()`.
+
+```typescript
+// ❌ BAD — inference
+const snapshot = result.current.getSnapshot();
+
+// ✅ GOOD — explicit type
+const snapshot: CoreWebVitalsSummary = result.current.getSnapshot();
+expect(snapshot.lcp).toBeDefined();
+```
+
+## 6. Console and Spy Types
+
+Type `jest.SpyInstance` and `console` method spies.
+
+```typescript
+const consoleSpy: jest.SpyInstance<void, [string, ...unknown[]]> = jest.spyOn(console, 'warn');
+```

@@ -16,6 +16,7 @@
 // Import commands.ts using ES2015 syntax:
 import './commands'
 import 'cypress-axe'
+import 'cypress-real-events'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
@@ -66,16 +67,14 @@ beforeEach(() => {
   cy.wait(500)
 })
 
-// Global after hook for cleanup
-afterEach(() => {
-  // Clean up any alerts or modals that might interfere with subsequent tests
-  cy.get('body').then(($body) => {
-    // Close any open dropdowns or modals
+// Global after hook for cleanup (beforeEach visits fresh page, so cleanup is best-effort)
+afterEach(function () {
+  // Skip cleanup if previous test failed - avoids "body not found" when page is in bad state
+  if (this.currentTest?.state === 'failed') return
+  cy.get('body', { timeout: 3000 }).then(($body) => {
     if ($body.find('[data-radix-popper-content-wrapper]').length > 0) {
       cy.get('body').type('{esc}')
     }
-    
-    // Clear any alerts
     if ($body.find('[data-testid="alerts-section"] [role="alert"]').length > 0) {
       cy.get('[data-testid="alerts-section"] [role="alert"]').each(($alert) => {
         cy.wrap($alert).invoke('remove')

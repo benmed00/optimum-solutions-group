@@ -1,0 +1,9 @@
+stateDiagram-v2
+    [*] --> Idle: Mount
+    Idle --> Editing: User types
+    Editing --> Idle: Clear/Cancel
+    Idle --> Submitting: Submit click
+    Submitting --> Success: API success
+    Submitting --> Error: API failure
+    Success --> Idle: Reset form
+    Error --> Idle: User retries
