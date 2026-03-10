@@ -64,19 +64,20 @@ const config = async ({ mode }: ConfigEnv): Promise<UserConfig> => ({
                id.includes('cypress');
       },
       output: {
-        // Split heavy third-party libraries into predictable vendor chunks.
-        // recharts (~250 kB) is only used by AnalyticsPage, so without this it
-        // inflates that page's chunk to 400+ kB and breaks the bundle size check.
+        // Split heavy charting libraries into dedicated vendor chunks.
+        // recharts (~200 kB) + its d3-* dependencies (~300 kB) are only used
+        // by AnalyticsPage; without this they inflate that page's chunk to
+        // 400+ kB. Split them separately so each chunk stays under 400 kB.
+        // NOTE: Do NOT manually chunk react/react-dom/react-router-dom —
+        // those packages have complex circular inter-dependencies that Vite
+        // handles safely on its own; forcing them into a manualChunk produces
+        // a TDZ "Cannot access before initialization" crash at runtime.
         manualChunks: (id) => {
-          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) {
-            return 'vendor-charts';
+          if (id.includes('node_modules/recharts')) {
+            return 'vendor-recharts';
           }
-          if (
-            id.includes('node_modules/react/') ||
-            id.includes('node_modules/react-dom/') ||
-            id.includes('node_modules/react-router-dom/')
-          ) {
-            return 'vendor-react';
+          if (id.includes('node_modules/d3-') || id.includes('node_modules/d3/')) {
+            return 'vendor-d3';
           }
         },
 

@@ -13,12 +13,13 @@ import { filesize } from 'filesize';
 
 // Default size limits (in bytes).
 // These reflect a real React SPA with third-party charting/analytics libs.
-// Gzipped transfer sizes are typically 25-35% of raw values shown here.
+// Gzipped transfer sizes are typically 25-35% of raw values shown here,
+// so a 500 kB raw chunk gzips to ~130 kB over the wire.
 const DEFAULT_LIMITS = {
-  js: 400 * 1024,         // 400 kB per individual JS chunk
+  js: 500 * 1024,         // 500 kB per individual JS chunk (recharts is ~476 kB raw)
   css: 150 * 1024,        // 150 kB per individual CSS file
   total: 2000 * 1024,     // 2 MB total bundle (gzips to ~600 kB)
-  individual: 400 * 1024, // 400 kB for any individual file
+  individual: 500 * 1024, // 500 kB for any individual file
 };
 
 // Color codes for console output

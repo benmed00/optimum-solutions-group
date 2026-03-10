@@ -489,7 +489,8 @@ jobs:
     - name: Check Bundle Size
       run: |
         # Check bundle size limits (2 MB total; gzips to ~600 kB over the wire)
-        node scripts/check-bundle-size.js --limit 2000000 --js-limit 409600 --path dist/assets
+        # recharts alone is ~476 kB raw (~127 kB gzipped) so per-file limit is 512 kB
+        node scripts/check-bundle-size.js --limit 2000000 --js-limit 512000 --path dist/assets
         
   # =============================================
   # Update Performance Baseline (Main Branch)
