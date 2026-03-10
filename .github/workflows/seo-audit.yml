@@ -1053,6 +1053,11 @@ jobs:
         name: seo-comprehensive-report
 
     - name: Update SEO Metrics
+      env:
+        OVERALL_SCORE: ${{ needs.seo-report.outputs.overall-score }}
+        TECHNICAL_SCORE: ${{ needs.seo-report.outputs.technical-score }}
+        TOTAL_ISSUES: ${{ needs.seo-report.outputs.total-issues }}
+        HIGH_SEVERITY_ISSUES: ${{ needs.seo-report.outputs.high-severity-issues }}
       run: |
         cat > update-metrics.cjs << 'EOF'
         // This would integrate with your analytics/monitoring system
@@ -1083,11 +1088,6 @@ jobs:
         EOF
         
         node update-metrics.cjs
-        env:
-          OVERALL_SCORE: ${{ needs.seo-report.outputs.overall-score }}
-          TECHNICAL_SCORE: ${{ needs.seo-report.outputs.technical-score }}
-          TOTAL_ISSUES: ${{ needs.seo-report.outputs.total-issues }}
-          HIGH_SEVERITY_ISSUES: ${{ needs.seo-report.outputs.high-severity-issues }}
 
     - name: Archive SEO History
       run: |
