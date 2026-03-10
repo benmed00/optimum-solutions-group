@@ -464,7 +464,7 @@ class PerformanceMonitor {
   }
 }
 
-// Singleton instance
+/** Singleton performance monitor; auto-starts on DOMContentLoaded. */
 export const performanceMonitor = new PerformanceMonitor();
 
 // Development-only global access

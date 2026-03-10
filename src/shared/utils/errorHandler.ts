@@ -1,4 +1,15 @@
-// Comprehensive error handler with advanced features
+/**
+ * Global error handler with rate limiting, event emission, and resource error tracking.
+ * Handles unhandled rejections, global errors, and resource load failures.
+ *
+ * @example
+ * ```ts
+ * import { errorHandler, handleError, wrapAsync } from '@/shared/utils/errorHandler';
+ * handleError('Something failed', { component: 'MyComponent' });
+ * const result = await wrapAsync(() => fetchData(), { component: 'DataFetcher' });
+ * ```
+ * @module errorHandler
+ */
 import { ErrorContext } from '../types/errorContext';
 import { compositeErrorHandler } from '../factories/errorHandlerFactory';
 import { eventBus, EVENT_TYPES } from '../services/eventBus';
@@ -230,23 +241,27 @@ class ErrorHandler {
   }
 }
 
-// Export singleton instance
+/** Singleton error handler instance. */
 export const errorHandler: ErrorHandler = ErrorHandler.getInstance();
 
-// Export utility functions
-export const handleError: (message: string, context?: ErrorContext) => void = (message: string, context?: ErrorContext): void => 
+/** Report an error by message string. Emits to event bus and composite handler. */
+export const handleError: (message: string, context?: ErrorContext) => void = (message: string, context?: ErrorContext): void =>
   errorHandler.handleError(message, context);
 
-export const wrapAsync: <T>(fn: () => Promise<T>, context?: ErrorContext) => Promise<T | null> = <T>(fn: () => Promise<T>, context?: ErrorContext): Promise<T | null> => 
+/** Wrap async function; returns null on error and reports via errorHandler. */
+export const wrapAsync: <T>(fn: () => Promise<T>, context?: ErrorContext) => Promise<T | null> = <T>(fn: () => Promise<T>, context?: ErrorContext): Promise<T | null> =>
   errorHandler.wrapAsync(fn, context);
 
-export const wrapSync: <T>(fn: () => T, context?: ErrorContext) => T | null = <T>(fn: () => T, context?: ErrorContext): T | null => 
+/** Wrap sync function; returns null on error and reports via errorHandler. */
+export const wrapSync: <T>(fn: () => T, context?: ErrorContext) => T | null = <T>(fn: () => T, context?: ErrorContext): T | null =>
   errorHandler.wrapSync(fn, context);
 
-export const getStoredErrors: () => ErrorContext[] = (): ErrorContext[] => 
+/** Get stored errors from localStorage (for debugging). */
+export const getStoredErrors: () => ErrorContext[] = (): ErrorContext[] =>
   errorHandler.getStoredErrors();
 
-export const clearStoredErrors: () => void = (): void => 
+/** Clear stored errors from localStorage. */
+export const clearStoredErrors: () => void = (): void =>
   errorHandler.clearStoredErrors();
 
 export default errorHandler;

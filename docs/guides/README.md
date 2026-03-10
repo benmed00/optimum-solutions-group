@@ -6,6 +6,7 @@ Setup guides, standards, and how-to documentation for the Optimum Solutions Grou
 
 | Category | Document | Description |
 | -------- | -------- | ----------- |
+| **Setup** | [Quick Start Guide](quick-start-guide.md) | Get running locally in minutes |
 | **Setup & Scripts** | [Package Scripts Analysis](package-scripts-analysis.md) | All npm scripts, classified with examples |
 | **Deployment** | [Deployment Guide](deployment-guide.md) | Build and deploy workflow |
 | **Accessibility** | [Accessibility Guide](accessibility.md) | WCAG 2.1 AA, ARIA, keyboard navigation |
@@ -22,6 +23,8 @@ Setup guides, standards, and how-to documentation for the Optimum Solutions Grou
 | **CI/CD** | [CI ESM Fixes Summary](ci-esm-fixes-summary.md) | CI and ESM compatibility fixes |
 | **PWA** | [PWA Implementation Guide](pwa-implementation-guide.md) | PWA setup and validation |
 | **Standards** | [TypeScript Standards](typescript-standards.md) | TypeScript conventions |
+| **Architecture** | [Platform Mapping & Diagrams](../architecture/platform-mapping-and-diagrams.md) | Class, component, sequence, C4, ER diagrams |
+| **Architecture** | [Draw.io Structure Guide](drawio-structure-guide.md) | Recreate diagrams in Draw.io |
 | **Status** | [Badges](badges.md) | Project status badges |
 
 ## Quick Links

@@ -1,0 +1,82 @@
+classDiagram
+    class ApiError {
+        +string message
+        +number status
+        +Response response
+        +constructor(message, status?, response?)
+    }
+
+    class ApiClient {
+        +get(url, config)
+        +post(url, body?, config)
+        +put(url, body?, config)
+        +delete(url, config)
+    }
+
+    class EventBus {
+        -Map~string,Set~listeners
+        -EventBusEvent[] eventHistory
+        +on(eventType, callback) EventUnsubscribe
+        +once(eventType, callback) EventUnsubscribe
+        +emit(eventType, data, source?)
+        +off(eventType)
+        +clear()
+        +getHistory(eventType?) EventBusEvent[]
+    }
+
+    class EventBusEvent {
+        +string type
+        +T data
+        +number timestamp
+        +string source
+    }
+
+    class ErrorBoundary {
+        -State state
+        -retryTimeout
+        +getDerivedStateFromError(error) State
+        +componentDidCatch(error, errorInfo)
+        +handleRetry()
+        +render() ReactNode
+    }
+
+    class AccessibilityProvider {
+        -prefersReducedMotion boolean
+        +announceMessage(message)
+        +useAccessibilityContext()
+    }
+
+    class PerformanceMonitor {
+        -PerformanceMetrics metrics
+        -UserInteractionMetrics userMetrics
+        -PerformanceAlert[] alerts
+        -Set observers
+        +startMonitoring()
+        +stopMonitoring()
+        +getMetrics() PerformanceMetrics
+        +getUserMetrics() UserInteractionMetrics
+        +subscribe(observer) unsubscribe
+        +sendToAnalytics(metrics)
+    }
+
+    class PerformanceMetrics {
+        +cls WebVitalsMetric
+        +fcp WebVitalsMetric
+        +lcp WebVitalsMetric
+        +ttfb WebVitalsMetric
+        +performanceScore number
+        +coreWebVitalsScore number
+    }
+
+    class ServiceWorkerManager {
+        +register(path?)
+        +unregister()
+        +update()
+    }
+
+    ApiError --|> Error
+    ApiClient ..> ApiError : throws
+    ApiClient ..> apiRequest : uses
+    EventBus --> EventBusEvent : creates
+    PerformanceMonitor --> PerformanceMetrics : holds
+    PerformanceMonitor ..> ApiClient : sendToAnalytics

@@ -1,0 +1,66 @@
+flowchart TB
+    subgraph App["App (Root)"]
+        EB[ErrorBoundary]
+        AP[AccessibilityProvider]
+        QC[QueryClientProvider]
+        BR[BrowserRouter]
+    end
+
+    subgraph Pages["Pages"]
+        Idx[Index]
+        Ana[AnalyticsPage]
+        CS[ComponentShowcase]
+        PWA[PWAPage]
+        NF[NotFound]
+    end
+
+    subgraph Features["Features"]
+        Nav[Navigation]
+        Hero[HeroSection]
+        About[AboutSection]
+        Svc[ServicesSection]
+        IoT[IoTSection]
+        Port[PortfolioSection]
+        Test[TestimonialsSection]
+        Cont[ContactSection]
+    end
+
+    subgraph Shared["Shared Components"]
+        PE[ProjectEstimator]
+        FAQ[FAQSection]
+        PWAInst[PWAInstallPrompt]
+        Foot[Footer]
+        BTT[BackToTop]
+        SEO[SEOHead]
+    end
+
+    subgraph Services["Services"]
+        API[apiClient]
+        EBus[eventBus]
+        Perf[performanceMonitor]
+    end
+
+    EB --> AP --> QC --> BR
+    BR --> Idx
+    BR --> Ana
+    BR --> CS
+    BR --> PWA
+    BR --> NF
+
+    Idx --> Nav
+    Idx --> Hero
+    Idx --> About
+    Idx --> Svc
+    Idx --> IoT
+    Idx --> PE
+    Idx --> Port
+    Idx --> Test
+    Idx --> FAQ
+    Idx --> Cont
+    Idx --> Foot
+    Idx --> BTT
+    Idx --> PWAInst
+    Idx --> SEO
+
+    Cont -.->|submit| API
+    Perf -.->|send metrics| API

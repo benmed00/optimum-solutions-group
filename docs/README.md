@@ -18,6 +18,7 @@ All project documentation is organized here. The root [README](../README.md) ser
 
 ### Core Documentation
 
+- [Quick Start Guide](guides/quick-start-guide.md) – Get running locally in minutes
 - [Package Scripts Reference](guides/package-scripts-analysis.md) – All npm scripts, classified with examples
 - [Deployment Guide](guides/deployment-guide.md)
 - [Accessibility](guides/accessibility.md)
@@ -25,7 +26,7 @@ All project documentation is organized here. The root [README](../README.md) ser
 - [Testing Standards](testing/testing-standards.md)
 - [Technical Audit Report](technical-audit-report.md)
 - [Optimization Project](optimization-project/README.md)
-- [API (Postman & OpenAPI)](api/README.md)
+- [API (Postman & OpenAPI)](api/README.md) — [Quick Reference](api/quick-reference.md) for endpoints
 
 ### Additional Resources
 

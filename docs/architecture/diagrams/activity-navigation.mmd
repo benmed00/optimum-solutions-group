@@ -1,0 +1,21 @@
+flowchart TD
+    A[User visits site] --> B{Page load}
+    B --> C[LoadingScreen]
+    B --> D[Index / Landing]
+    C --> D
+    D --> E[Scroll / Navigate sections]
+    E --> F{Action?}
+    F -->|Click nav link| G[Scroll to #about, #services, #iot, etc.]
+    F -->|Click /analytics| H[AnalyticsPage]
+    F -->|Click /component-showcase| I[ComponentShowcase]
+    F -->|Click /pwa| J[PWAPage]
+    F -->|Submit contact form| K[ContactSection handleSubmit]
+    F -->|Use Project Estimator| L[ProjectEstimator calculateEstimate]
+    G --> E
+    H --> E
+    I --> E
+    J --> E
+    K --> M[Toast: Success]
+    L --> N[Toast: Estimate]
+    M --> E
+    N --> E

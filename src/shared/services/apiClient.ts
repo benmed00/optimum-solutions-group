@@ -1,16 +1,31 @@
 /**
  * Centralized API client with retry, timeout, and error normalization.
  * Use for all HTTP requests to ensure consistent behavior.
+ *
+ * @example
+ * ```ts
+ * import { apiClient } from '@/shared/services/apiClient';
+ * const data = await apiClient.get('/user/profile', { baseUrl: API_URL });
+ * await apiClient.post('/contact', { name, email, message });
+ * ```
+ * @module apiClient
  */
 
+/** Configuration for API requests (retry, timeout, headers). */
 export interface ApiClientConfig {
+  /** Base URL prepended to relative paths (e.g. `https://api.example.com/v1`). */
   baseUrl?: string;
+  /** Request timeout in ms. Default: 10000. */
   timeout?: number;
+  /** Number of retries for retryable errors (5xx, 408, 429). Default: 2. */
   retries?: number;
+  /** Delay between retries in ms. Default: 1000. */
   retryDelay?: number;
+  /** Additional headers merged with request. */
   headers?: Record<string, string>;
 }
 
+/** HTTP error with status code and raw Response for inspection. */
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -49,12 +64,24 @@ async function fetchWithTimeout(
   }
 }
 
+/** Options for apiRequest; extends RequestInit with typed body. */
 export interface ApiRequestOptions extends Omit<RequestInit, 'body'> {
+  /** Request body; will be JSON.stringify'd if object. */
   body?: unknown;
-  /** Override fetch options (e.g. keepalive for page unload) */
+  /** Override fetch options (e.g. keepalive for page unload). */
   fetchOverrides?: RequestInit;
 }
 
+/**
+ * Low-level HTTP request with retry, timeout, and JSON handling.
+ * Prefer apiClient.get/post/put/delete for typical usage.
+ *
+ * @param url - Full URL or path (relative to config.baseUrl)
+ * @param options - Method, headers, body
+ * @param config - baseUrl, timeout, retries, retryDelay, headers
+ * @returns Parsed JSON or text; undefined for 204/empty
+ * @throws {ApiError} On non-2xx after retries
+ */
 export async function apiRequest<T = unknown>(
   url: string,
   options: ApiRequestOptions = {},
@@ -145,16 +172,21 @@ export async function apiRequest<T = unknown>(
   throw lastError ?? new ApiError('Request failed after retries');
 }
 
+/** Typed HTTP client: get, post, put, delete with retry and timeout. */
 export const apiClient = {
+  /** GET request. */
   get: <T = unknown>(url: string, config?: ApiClientConfig) =>
     apiRequest<T>(url, { method: 'GET' }, config),
 
+  /** POST request with optional JSON body. */
   post: <T = unknown>(url: string, body?: unknown, config?: ApiClientConfig) =>
     apiRequest<T>(url, { method: 'POST', body }, config),
 
+  /** PUT request with optional JSON body. */
   put: <T = unknown>(url: string, body?: unknown, config?: ApiClientConfig) =>
     apiRequest<T>(url, { method: 'PUT', body }, config),
 
+  /** DELETE request. */
   delete: <T = unknown>(url: string, config?: ApiClientConfig) =>
     apiRequest<T>(url, { method: 'DELETE' }, config),
 };

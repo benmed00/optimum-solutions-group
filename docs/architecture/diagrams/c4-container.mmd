@@ -1,0 +1,14 @@
+flowchart TB
+    subgraph WebApp["Web Application"]
+        SPA[React SPA]
+        SW[Service Worker]
+    end
+
+    subgraph External["External"]
+        Visitor[Visitor]
+        API[Backend API]
+    end
+
+    Visitor -->|HTTPS| SPA
+    SPA -->|Fetch, XHR| API
+    SW -->|Cache, Offline| SPA

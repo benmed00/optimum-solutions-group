@@ -6,9 +6,11 @@ Architecture diagrams and visual documentation.
 
 | File | Description |
 | ---- | ----------- |
+| [platform-mapping-and-diagrams.md](platform-mapping-and-diagrams.md) | Platform mapping with class, component, sequence, activity, state, ER, deployment, C4, and use case diagrams |
+| [guides/drawio-structure-guide.md](../guides/drawio-structure-guide.md) | Draw.io structure guide for recreating diagrams |
 | [diagram.png](diagram.png) | Architecture diagram (PNG) |
-| [Untitled Diagram.drawio.png](Untitled Diagram.drawio.png) | Draw.io diagram export (PNG) |
-| [Untitled Diagram.drawio.svg](Untitled Diagram.drawio.svg) | Draw.io diagram export (SVG) |
+| [platform-architecture.drawio.png](platform-architecture.drawio.png) | Platform architecture — Draw.io export (PNG) |
+| [platform-architecture.drawio.svg](platform-architecture.drawio.svg) | Platform architecture — Draw.io export (SVG) |
 
 ## Related
 

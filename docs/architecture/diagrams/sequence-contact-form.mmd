@@ -1,0 +1,15 @@
+sequenceDiagram
+    participant User
+    participant ContactSection
+    participant useToast
+    participant Toast
+
+    User->>ContactSection: Fill form & submit
+    ContactSection->>ContactSection: handleSubmit()
+    ContactSection->>ContactSection: setIsSubmitting(true)
+    ContactSection->>ContactSection: Simulate API (1s delay)
+    ContactSection->>useToast: toast({ title, description })
+    useToast->>Toast: Display success message
+    ContactSection->>ContactSection: Reset form
+    ContactSection->>ContactSection: setIsSubmitting(false)
+    Toast-->>User: "Message Sent Successfully!"

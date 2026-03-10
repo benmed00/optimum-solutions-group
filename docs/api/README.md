@@ -6,6 +6,7 @@ Postman collection and OpenAPI (Swagger) specification for the platform API.
 
 | File | Description |
 | ---- | ----------- |
+| [quick-reference.md](quick-reference.md) | Condensed API reference (endpoints, auth, examples) |
 | `openapi.yaml` | OpenAPI 3.1 specification (Swagger-compatible) |
 | `postman-collection.json` | Postman Collection v2.1 with mocks and examples |
 | `postman-environment.json` | Local development environment |

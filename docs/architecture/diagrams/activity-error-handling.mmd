@@ -1,0 +1,16 @@
+flowchart TD
+    A[Component renders] --> B{Error?}
+    B -->|No| C[Render children]
+    B -->|Yes| D[ErrorBoundary catches]
+    D --> E[getDerivedStateFromError]
+    E --> F[componentDidCatch]
+    F --> G{onError provided?}
+    G -->|Yes| H[Call onError callback]
+    G -->|No| I[Log to console]
+    H --> J[Render fallback]
+    I --> J
+    J --> K{User clicks Retry?}
+    K -->|Yes| L[handleRetry]
+    L --> M[setState hasError: false]
+    M --> A
+    K -->|No| J

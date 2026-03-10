@@ -1,0 +1,44 @@
+flowchart TB
+    subgraph Dev["Development"]
+        DevLocal[localhost:8080]
+        Vite[Vite Dev Server]
+        HMR[HMR]
+        DevLocal --> Vite
+        Vite --> HMR
+    end
+
+    subgraph Build["Build Pipeline"]
+        NPM[npm run build]
+        ViteBuild[Vite Build]
+        Rollup[Rollup Bundling]
+        Output[dist/]
+        NPM --> ViteBuild
+        ViteBuild --> Rollup
+        Rollup --> Output
+    end
+
+    subgraph Hosting["Production Hosting"]
+        CDN[CDN / Edge]
+        Static[Static Files]
+        SW[Service Worker]
+        Manifest[manifest.json]
+        Output --> Static
+        Static --> CDN
+        SW --> CDN
+        Manifest --> CDN
+    end
+
+    subgraph API["Backend API"]
+        APIProd[api.optimumsolutions.com]
+        APIStaging[api.staging.optimumsolutions.com]
+    end
+
+    subgraph Client["Client Browser"]
+        Browser[Browser]
+        PWA[PWA Cache]
+        Browser --> CDN
+        Browser --> APIProd
+        PWA --> Browser
+    end
+
+    Build --> Hosting

@@ -1,0 +1,17 @@
+sequenceDiagram
+    participant Page
+    participant PerformanceMonitor
+    participant ApiClient
+    participant AnalyticsAPI
+
+    Page->>PerformanceMonitor: DOMContentLoaded
+    PerformanceMonitor->>PerformanceMonitor: startMonitoring()
+    PerformanceMonitor->>PerformanceMonitor: initializeWebVitals()
+    PerformanceMonitor->>PerformanceMonitor: initializeCustomMetrics()
+    PerformanceMonitor->>PerformanceMonitor: initializeUserTracking()
+    loop Every 5 min (production)
+        PerformanceMonitor->>PerformanceMonitor: sendToAnalytics(metrics)
+        PerformanceMonitor->>ApiClient: post('/api/analytics/performance', payload)
+        ApiClient->>AnalyticsAPI: HTTP POST
+        AnalyticsAPI-->>ApiClient: 200 OK
+    end

@@ -1,0 +1,34 @@
+flowchart TB
+    subgraph IndexPage["Index Page"]
+        Nav[Navigation]
+        Hero[HeroSection]
+        About[AboutSection]
+        Services[ServicesSection]
+        IoT[IoTSection]
+        Estimator[ProjectEstimator]
+        Portfolio[PortfolioSection]
+        Testimonials[TestimonialsSection]
+        FAQ[FAQSection]
+        Contact[ContactSection]
+        Footer[Footer]
+    end
+
+    subgraph Shared["Shared"]
+        SEO[SEOHead]
+        PWAInst[PWAInstallPrompt]
+        Analytics[useAnalytics]
+    end
+
+    Nav --> Hero
+    Hero --> About
+    About --> Services
+    Services --> IoT
+    IoT --> Estimator
+    Estimator --> Portfolio
+    Portfolio --> Testimonials
+    Testimonials --> FAQ
+    FAQ --> Contact
+    Contact --> Footer
+    SEO --> Nav
+    Analytics --> Hero
+    PWAInst --> Hero
