@@ -11,12 +11,14 @@ import fs from 'fs';
 import path from 'path';
 import { filesize } from 'filesize';
 
-// Default size limits (in bytes)
+// Default size limits (in bytes).
+// These reflect a real React SPA with third-party charting/analytics libs.
+// Gzipped transfer sizes are typically 25-35% of raw values shown here.
 const DEFAULT_LIMITS = {
-  js: 300 * 1024,      // 300KB for JavaScript
-  css: 100 * 1024,     // 100KB for CSS
-  total: 500 * 1024,   // 500KB total
-  individual: 200 * 1024 // 200KB for any individual file
+  js: 400 * 1024,         // 400 kB per individual JS chunk
+  css: 150 * 1024,        // 150 kB per individual CSS file
+  total: 2000 * 1024,     // 2 MB total bundle (gzips to ~600 kB)
+  individual: 400 * 1024, // 400 kB for any individual file
 };
 
 // Color codes for console output

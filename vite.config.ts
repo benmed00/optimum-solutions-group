@@ -64,8 +64,22 @@ const config = async ({ mode }: ConfigEnv): Promise<UserConfig> => ({
                id.includes('cypress');
       },
       output: {
-        // Automatic chunking - let Vite decide optimal chunks
-        
+        // Split heavy third-party libraries into predictable vendor chunks.
+        // recharts (~250 kB) is only used by AnalyticsPage, so without this it
+        // inflates that page's chunk to 400+ kB and breaks the bundle size check.
+        manualChunks: (id) => {
+          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) {
+            return 'vendor-charts';
+          }
+          if (
+            id.includes('node_modules/react/') ||
+            id.includes('node_modules/react-dom/') ||
+            id.includes('node_modules/react-router-dom/')
+          ) {
+            return 'vendor-react';
+          }
+        },
+
         // Optimized file naming for better caching
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: (chunkInfo) => {

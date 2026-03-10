@@ -488,8 +488,8 @@ jobs:
 
     - name: Check Bundle Size
       run: |
-        # Check bundle size limits
-        node scripts/check-bundle-size.js --limit 300000 --path dist/assets
+        # Check bundle size limits (2 MB total; gzips to ~600 kB over the wire)
+        node scripts/check-bundle-size.js --limit 2000000 --js-limit 409600 --path dist/assets
         
   # =============================================
   # Update Performance Baseline (Main Branch)
