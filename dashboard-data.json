@@ -1,0 +1,121 @@
+{
+  "lastUpdated": "2026-09-26T10:48:34.629Z",
+  "summary": {
+    "overallScore": 100,
+    "totalAudits": 3,
+    "lastAudit": "2026-09-26T10:48:34.633Z",
+    "status": "critical",
+    "keyMetrics": {
+      "performanceScore": 0,
+      "lcp": 0,
+      "cls": 0,
+      "bundleSize": 0
+    },
+    "alertCounts": {
+      "critical": 1,
+      "error": 0,
+      "warning": 0
+    }
+  },
+  "history": [
+    {
+      "type": "performance",
+      "performanceScore": 0,
+      "accessibilityScore": 0,
+      "bestPracticesScore": 0,
+      "seoScore": 0,
+      "lcp": 0,
+      "fid": 0,
+      "cls": 0,
+      "fcp": 0,
+      "ttfb": 0
+    }
+  ],
+  "trends": {},
+  "alerts": [
+    {
+      "id": "perf-score-critical",
+      "type": "critical",
+      "category": "performance",
+      "title": "Critical Performance Score",
+      "message": "Performance score is 0/100, which is critically low",
+      "timestamp": "2026-09-26T10:48:34.633Z",
+      "value": 0,
+      "threshold": 50
+    }
+  ],
+  "recommendations": [],
+  "performance": {
+    "current": {
+      "performanceScore": 0,
+      "accessibilityScore": 0,
+      "bestPracticesScore": 0,
+      "seoScore": 0,
+      "lcp": 0,
+      "fid": 0,
+      "cls": 0,
+      "fcp": 0,
+      "ttfb": 0,
+      "tbt": 0,
+      "si": 0
+    },
+    "history": [
+      {
+        "performanceScore": 0,
+        "accessibilityScore": 0,
+        "bestPracticesScore": 0,
+        "seoScore": 0,
+        "lcp": 0,
+        "fid": 0,
+        "cls": 0,
+        "fcp": 0,
+        "ttfb": 0
+      }
+    ],
+    "totalAudits": 1
+  },
+  "accessibility": {
+    "current": {
+      "violationsCount": 0,
+      "passesCount": 0,
+      "incompleteCount": 0,
+      "inapplicableCount": 0,
+      "score": 100,
+      "tags": []
+    },
+    "history": [
+      {
+        "timestamp": 1790419714633,
+        "violationsCount": 0,
+        "passesCount": 0,
+        "score": 100,
+        "criticalViolations": 0,
+        "seriousViolations": 0
+      }
+    ],
+    "lastAudit": 1790419714633,
+    "totalAudits": 1,
+    "commonViolations": []
+  },
+  "bundle": {
+    "current": {
+      "totalSize": 0,
+      "totalFiles": 0,
+      "jsSize": 0,
+      "cssSize": 0,
+      "violations": 0,
+      "warnings": 0
+    },
+    "history": [
+      {
+        "timestamp": "2026-09-26T10:40:55.334Z",
+        "totalSize": 0,
+        "jsSize": 0,
+        "cssSize": 0,
+        "violations": 0
+      }
+    ],
+    "lastAnalysis": "2026-09-26T10:40:55.334Z",
+    "totalAnalyses": 1
+  }
+}
